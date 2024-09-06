@@ -54,6 +54,7 @@ class ExampleDriver(CLIDriver):
 
             # make_removal_hook will remove the specified step from the flow
             HammerTool.make_removal_hook("place_bumps"),
+            #            HammerTool.make_pre_insertion_hook("")
 
             # The target step in any of the above calls may be a default step or another one of your custom hooks
         ]
