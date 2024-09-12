@@ -151,3 +151,6 @@
 [submodule "generators/vexiiriscv"]
 	path = generators/vexiiriscv
 	url = https://github.com/ucb-bar/vexiiriscv-tile.git
+[submodule "vlsi/fa24-hammer"]
+	path = vlsi/hammer
+	url = git@github.com:ucb-eecs151tapeout/fa24-hammer.git
