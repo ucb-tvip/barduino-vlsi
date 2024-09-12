@@ -19,7 +19,7 @@ include $(base_dir)/variables.mk
 # vlsi types and rules
 #########################################################################################
 sim_name           ?= vcs # needed for GenerateSimFiles, but is unused
-tech_name          ?= asap7
+tech_name          ?= sky130
 tech_dir           ?= $(if $(filter $(tech_name),sky130 asap7 nangate45),\
                         $(shell python3 -c "import os, hammer.technology.$(tech_name);\
 						print(os.path.dirname(hammer.technology.$(tech_name).__file__))"),\
