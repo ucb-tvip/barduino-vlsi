@@ -14,6 +14,16 @@ technology.sky130:
 
 # SRAM compiler options
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
+vlsi.inputs.supplies.power: [ {name: "VDD",  pins: ["VDD" ]},
+                {name: "VPWR", pins: ["VPWR"], tie: "VDD"},
+                {name: "VPB",  pins: ["VPB" ], tie: "VDD"},
+                {name: "HI",  pins: ["HI" ], tie: "VDD"},
+                {name: "vdd",  pins: ["vdd" ], tie: "VDD"}]
+vlsi.inputs.supplies.ground: [ {name: "VSS",  pins: ["VSS" ]},
+          {name: "VGND", pins: ["VGND"], tie: "VSS"},
+          {name: "LO", pins: ["LO"], tie: "VSS"},
+          {name: "VNB",  pins: ["VNB" ], tie: "VSS"},
+          {name: "vss",  pina: ["vss" ], tie: "VSS"}]
 
 # TODO: fix the spice netlists for these SRAMS they currently reference rahul's bwrc nfs 
 # vlsi.technology.extra_libraries:
