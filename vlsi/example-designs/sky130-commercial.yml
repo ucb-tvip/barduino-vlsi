@@ -1,9 +1,9 @@
 # Override configurations in ../example-sky130.yml
 
 # Specify clock signals
-vlsi.inputs.clocks: [
-  {name: "clock_uncore", period: "30ns", uncertainty: "2ns"}
-]
+#vlsi.inputs.clocks: [
+  #{name: "clock_uncore", period: "30ns", uncertainty: "2ns"}
+#]
 
 # Placement Constraints
 # If overriding the placement constraints in example-sky130.yml,
