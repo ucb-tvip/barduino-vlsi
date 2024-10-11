@@ -158,7 +158,7 @@ lazy val chipyard = (project in file("generators/chipyard"))
     dsptools, rocket_dsp_utils,
     gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator,
     constellation, mempress, barf, shuttle, caliptra_aes, rerocc,
-    compressacc, saturn, ara, firrtl2_bridge)
+    compressacc, saturn, ara, firrtl2_bridge, ofo)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(
     libraryDependencies ++= Seq(
@@ -403,3 +403,9 @@ lazy val firechip = (project in file("generators/firechip/chip"))
     Test / testOptions += Tests.Argument("-oF")
   )
   .settings(scalaTestSettings)
+lazy val ofo = (project in file("generators/ofo"))
+  .dependsOn(rocketchip)
+    .settings(libraryDependencies ++= rocketLibDeps.value)
+      .settings(chiselSettings)
+        .settings(commonSettings)
+
