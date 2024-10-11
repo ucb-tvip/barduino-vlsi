@@ -154,3 +154,6 @@
 [submodule "vlsi/fa24-hammer"]
 	path = vlsi/hammer
 	url = git@github.com:ucb-eecs151tapeout/fa24-hammer.git
+[submodule "generators/ofo"]
+	path = generators/ofo
+	url = git@github.com:elamdf/ofo-generator.git
