@@ -4,8 +4,9 @@
 
 int main(void)
 {
-  reg_write32(RESET_REG, 1);
- while (!reg_read32(RESET_REG) & 0x1) {
+  printf("amogus\n");
+  reg_write32(RESET_REG, 0);
+   while (!reg_read32(RESET_REG) & 0x0) {
 
     printf("waiting\n");
   }
