@@ -11,9 +11,10 @@ RDIR=$(git rev-parse --show-toplevel)
 cd $RDIR
 
 DRIVER_BIN=rocket_ofo_driver
-OFO_BIN=median
+OFO_BIN=write_a_lot
 
 pushd tests
+make clean
 
 # build tests
 make
@@ -35,5 +36,27 @@ rm -rf ${out_name}.out*
 make CONFIG=${CFG} \
     BINARY=${SOC1_BIN} \
     EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} +uartlog=${out_name}.out" \
+=======
+./build-for-ofo.sh ${DRIVER_BIN}
+popd
+
+SOC1_BIN=$PWD/tests/${OFO_BIN}.riscv
+#SOC1_BIN=$PWD/tests/nic-loopback.riscv
+SOC2_BIN=$PWD/tests/${DRIVER_BIN}.rocket.riscv
+
+CFG=OFORocketConfig
+
+pushd sims/vcs
+rm -rf uartpty*
+rm -rf ${CFG}.out*
+#make clean
+# payload should load the 2nd binary (provided it has the right addresses)
+# # TODO undersatnd with soc1-msip is 
+# # +uartlog=${CFG}.out +write-soc1-msip +link_lat_a2s=10 +link_lat_s2a=10" 
+make CONFIG=${CFG} \
+    BINARY=${SOC1_BIN} \
+    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} +link_lat_a2s=10 +link_lat_s2a=10" \
+    USE_VPD=1\
+>>>>>>> uh doesn't exactly work but what should be the bones of a working 2-core
     run-binary-debug
 rm -rf uartpty*

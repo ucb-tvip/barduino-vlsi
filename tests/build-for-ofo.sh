@@ -9,7 +9,7 @@ set -ex
 make
 
 BINARY_BUILD=${1}.riscv
-BINARY_OUTPUT=${1}.ofo.riscv
+BINARY_OUTPUT=${1}.rocket.riscv
 
 # -O - output as a binary
 # --change-addresses - add N to the default address (aka DRAM) - move up 0x2000_0000 to 0xa000_0000
