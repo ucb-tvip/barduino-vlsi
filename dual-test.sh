@@ -10,6 +10,7 @@ RDIR=$(git rev-parse --show-toplevel)
 cd $RDIR
 
 DRIVER_BIN=rocket_ofo_driver
+DRIVER_BIN=accum
 OFO_BIN=write_a_lot
 
 pushd tests
@@ -34,9 +35,10 @@ rm -rf ${CFG}.out*
 # payload should load the 2nd binary (provided it has the right addresses)
 # # TODO undersatnd with soc1-msip is 
 # # +uartlog=${CFG}.out +write-soc1-msip +link_lat_a2s=10 +link_lat_s2a=10" 
+#
+    # USE_VPD=1\
 make CONFIG=${CFG} \
     BINARY=${SOC1_BIN} \
     EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} +link_lat_a2s=10 +link_lat_s2a=10" \
-    USE_VPD=1\
     run-binary-debug
 rm -rf uartpty*
