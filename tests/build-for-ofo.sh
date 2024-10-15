@@ -16,7 +16,7 @@ BINARY_OUTPUT=${1}.rocket.riscv
     #-S
     #-O binary \
 riscv64-unknown-elf-objcopy \
-    --change-addresses 0x20000000 \
+    --change-addresses 0x10000000 \
     $BINARY_BUILD \
     $BINARY_OUTPUT
 
