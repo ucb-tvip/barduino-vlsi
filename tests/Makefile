@@ -29,7 +29,7 @@ include libgloss.mk
 
 PROGRAMS = pwm blkdev accum charcount nic-loopback big-blkdev pingd \
            streaming-passthrough streaming-fir nvdla spiflashread spiflashwrite fft gcd \
-           hello mt-hello symmetric test_set_reset
+           hello mt-hello symmetric test_set_reset rocket_ofo_driver write_a_lot
 
 
 .DEFAULT_GOAL := default
