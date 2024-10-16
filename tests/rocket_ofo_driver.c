@@ -4,12 +4,10 @@
 
 int main(void)
 {
- // printf("amogus\n");
+ printf("amogus\n");
   // enable the core
   reg_write32(RESET_REG, 0);
-  /*
   while(1) {
-    printf("amogus\n");
+    printf("waiting for ofo to crash...\n");
   }
-  */
 }
