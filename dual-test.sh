@@ -10,7 +10,7 @@ RDIR=$(git rev-parse --show-toplevel)
 cd $RDIR
 
 DRIVER_BIN=rocket_ofo_driver
-DRIVER_BIN=accum
+#DRIVER_BIN=accum
 OFO_BIN=write_a_lot
 
 pushd tests
@@ -19,12 +19,12 @@ make clean
 # build tests
 make
 # should create 2 files - OFO_BIN.riscv and DRIVER_BIN.rocket.riscv
-./build-for-ofo.sh ${DRIVER_BIN}
+./build-for-ofo.sh ${OFO_BIN}
 popd
 
-SOC1_BIN=$PWD/tests/${OFO_BIN}.riscv
+SOC1_BIN=$PWD/tests/${DRIVER_BIN}.riscv
 #SOC1_BIN=$PWD/tests/nic-loopback.riscv
-SOC2_BIN=$PWD/tests/${DRIVER_BIN}.rocket.riscv
+SOC2_BIN=$PWD/tests/${OFO_BIN}.ofo.riscv
 
 CFG=OFORocketConfig
 
@@ -37,8 +37,9 @@ rm -rf ${CFG}.out*
 # # +uartlog=${CFG}.out +write-soc1-msip +link_lat_a2s=10 +link_lat_s2a=10" 
 #
     # USE_VPD=1\
+    ## +link_lat_a2s=10 +link_lat_s2a=10" \
 make CONFIG=${CFG} \
     BINARY=${SOC1_BIN} \
-    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} +link_lat_a2s=10 +link_lat_s2a=10" \
     run-binary-debug
+    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} \  
 rm -rf uartpty*
