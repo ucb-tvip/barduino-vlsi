@@ -1,4 +1,5 @@
 #!/bin/bash
+echo "TODO figure out how to build 151t binaries in 32bit rv32i and rocket in 64bit with one makefile"
 
 # ty abe for the reference -elam
 
