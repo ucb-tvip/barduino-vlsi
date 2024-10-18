@@ -17,7 +17,7 @@ import freechips.rocketchip.subsystem.{ExtBus, ExtMem, MemoryPortParams, MasterP
 
 class OFORocketConfig
     extends Config(
-      new ofo.WithOFOCores(Seq(ofo.OneFiftyOneCoreParams())) ++
+      new ofo.WithOFOCores(Seq(ofo.OneFiftyOneCoreParams(projectName="fa23-mechanical-engineering-main"))) ++
   new freechips.rocketchip.rocket.WithNHugeCores(1) ++                                  // single rocket-core
   new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 1L) ++ // make mem big enough for multiple binaries
 
@@ -30,49 +30,11 @@ class OFORocketConfig
   // new freechips.rocketchip.subsystem.WithNoMemPort ++             // remove backing memory
         new chipyard.config.AbstractConfig
     )
-    /*
-class WithOFOSoCModifications extends Config(
-  //  new Config((site, here, up) => {
-    // disable tsi on this soc
-    //case SerialTLKey => None
-    // move CLINT to know addr
-    //case CLINTKey => Some(CLINTParams(baseAddress = BigInt("d0000000",16)))
-    // have bootrom jump to proper dram loc
-    //case BootAddrRegKey => up(BootAddrRegKey).map(_.copy(defaultBootAddress = BigInt("a0000000",16))) // , defaultClintAddress = BigInt("b000_0000",16)))
-  //}) ++
-  // setup memory to be at different location
+class OFORawConfig
+    extends Config(
+      new ofo.WithOFOCores(Seq(ofo.OneFiftyOneCoreParams(projectName="kevin-kore"))) ++
 
-  /*
-  new Config((site, here, up) => {
-    case ExtMem => Some(MemoryPortParams(MasterPortParams(
-      base = BigInt("80000000",16),
-      size = BigInt("40000000",16),
-      beatBytes = site(MemoryBusKey).beatBytes,
-      idBits = 4), 
-      1 // 1 mem. channels
-    ))
-  }) 
-  */
-)
-/*
-
-  // setup slave port (slave to AppSoC)
-  new Config((site, here, up) => {
-    case ExtIn => Some(SlavePortParams(
-      beatBytes = 8, // 64b of data per xfer
-      idBits = 4, // 4b of source
-      sourceBits = 1 // ?? changes nothing
-    ))
-  }) ++
-  // setup master port (master to AppSoC)
-  new Config((site, here, up) => {
-    case ExtBus2 => Some(MasterPortParams(
-      base = BigInt("8000_0000",16),
-      size = x"1000_0000",
-      beatBytes = site(MemoryBusKey).beatBytes, // 64b of data per xfer
-      idBits = 4, // 4b of source
-      executable = true // left true otherwise it will add extra bundle fields
-    ))
-  })
-*/
-*/
+      new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 1L) ++ // make mem big enough for multiple binaries
+      //new freechips.rocketchip.subsystem.WithNBanks(0) ++             // remove L2$
+      new chipyard.config.AbstractConfig
+    )
