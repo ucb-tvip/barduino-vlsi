@@ -11,11 +11,9 @@ RDIR=$(git rev-parse --show-toplevel)
 cd $RDIR
 
 DRIVER_BIN=rocket_ofo_driver
-#DRIVER_BIN=accum
-OFO_BIN=write_a_lot
+OFO_BIN=median
 
 pushd tests
-make clean
 
 # build tests
 make
@@ -24,24 +22,18 @@ make
 popd
 
 SOC1_BIN=$PWD/tests/${DRIVER_BIN}.riscv
-#SOC1_BIN=$PWD/tests/nic-loopback.riscv
-SOC2_BIN=$PWD/generators/ofo/src/main/resources/vsrc/cores/kevin-kore/tests/asm/add.elf
-#SOC2_BIN=$PWD/tests/${OFO_BIN}.ofo.riscv
+SOC2_BIN=${1:-$PWD/tests/${OFO_BIN}.ofo.riscv}
 
 CFG=OFORocketConfig
+out_name=$(basename $SOC2_BIN)
 
 pushd sims/vcs
 rm -rf uartpty*
-rm -rf ${CFG}.out*
-#make clean
+rm -rf ${out_name}.out*
 # payload should load the 2nd binary (provided it has the right addresses)
-# # TODO undersatnd with soc1-msip is 
-# # +uartlog=${CFG}.out +write-soc1-msip +link_lat_a2s=10 +link_lat_s2a=10" 
-#
-    # USE_VPD=1\
-    ## +link_lat_a2s=10 +link_lat_s2a=10" \
+
 make CONFIG=${CFG} \
     BINARY=${SOC1_BIN} \
-    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN}" \
+    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} +uartlog=${out_name}.out" \
     run-binary-debug
 rm -rf uartpty*
