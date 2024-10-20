@@ -25,7 +25,8 @@ popd
 
 SOC1_BIN=$PWD/tests/${DRIVER_BIN}.riscv
 #SOC1_BIN=$PWD/tests/nic-loopback.riscv
-SOC2_BIN=$PWD/tests/${OFO_BIN}.ofo.riscv
+SOC2_BIN=$PWD/generators/ofo/src/main/resources/vsrc/cores/kevin-kore/tests/asm/add.elf
+#SOC2_BIN=$PWD/tests/${OFO_BIN}.ofo.riscv
 
 CFG=OFORocketConfig
 
@@ -41,6 +42,6 @@ rm -rf ${CFG}.out*
     ## +link_lat_a2s=10 +link_lat_s2a=10" \
 make CONFIG=${CFG} \
     BINARY=${SOC1_BIN} \
+    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN}" \
     run-binary-debug
-    EXTRA_SIM_FLAGS="+use-loadmem-hack +payload=${SOC2_BIN} \  
 rm -rf uartpty*

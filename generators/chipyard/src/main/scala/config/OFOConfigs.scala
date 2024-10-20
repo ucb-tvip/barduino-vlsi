@@ -17,7 +17,7 @@ import freechips.rocketchip.subsystem.{ExtBus, ExtMem, MemoryPortParams, MasterP
 
 class OFORocketConfig
     extends Config(
-      new ofo.WithOFOCores(Seq(ofo.OneFiftyOneCoreParams(projectName="fa23-mechanical-engineering-main"))) ++
+      new ofo.WithOFOCores(Seq(ofo.OneFiftyOneCoreParams(projectName="kevin-kore"))) ++
   new freechips.rocketchip.rocket.WithNHugeCores(1) ++                                  // single rocket-core
   new freechips.rocketchip.subsystem.WithExtMemSize((1 << 30) * 1L) ++ // make mem big enough for multiple binaries
 
