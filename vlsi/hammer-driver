@@ -1,0 +1,310 @@
+#!/usr/bin/env python3
+
+from hammer.vlsi import CLIDriver, HammerTool, HammerDriver, HammerToolHookAction
+
+from pathlib import Path
+from typing import Dict, Callable, Optional, List
+
+from hammer.technology.sky130 import SKY130Tech
+
+import json
+
+
+def check_timing_intent(x: HammerTool) -> bool:
+    x.append('check_timing_intent -verbose')
+    return True
+
+def dont_touch(x: HammerTool) -> bool:
+    x.append('set_dont_touch [get_db insts -if {.base_cell.base_class == block}]')
+    print("TODO: elam figure out why sky130_fd_sc_hd__bufbuf_16  is donttocuh- it doesn't seem to be present in the design...")
+    #x.append('set_dont_touch [get_db insts -if {.base_cell.name == sky130_fd_sc_hd__bufbuf_16 }] true')
+    return True
+
+def print_macros(x: HammerTool) -> bool:
+    x.append('''
+set macros_file "./macros.txt"
+set macros_file [open $macros_file "w"]
+set macros [get_db insts -if {.base_cell.base_class == block}]
+foreach m $macros {
+    puts "$m"
+    puts $macros_file "$m"
+}
+close $macros_file
+''')
+    return True
+
+def set_routing_layers(x: HammerTool) -> bool:
+    if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
+       x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
+        x.append("""
+set_db design_bottom_routing_layer 2
+set_db design_top_routing_layer 6
+# deprected syntax, but this used to always work
+set_db route_design_bottom_routing_layer 2
+        """)
+    return True      
+
+
+def enable_clock_antenna_insertion(x: HammerTool) -> bool:
+    x.append('set_db route_design_diode_insertion_for_clock_nets true')
+    return True
+
+def add_fillers(x: HammerTool) -> bool:
+    if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
+       x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
+        x.add_fillers()  # call Innovus's add_fillers step
+        # x.append("opt_design -post_route -setup -hold")
+        # x.append("opt_design -post_route -hold")
+    return True
+
+def signoff_timing(x: HammerTool) -> bool:
+    if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
+       x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
+        x.append('''
+# setup timing
+time_design -sign_off
+# hold timing
+time_design -sign_off -hold
+''')
+    return True
+
+# def write_top_files(x: HammerTool) -> bool:
+#     if x.get_setting("vlsi.core.technology") == "sky130" and \
+#        x.get_setting("vlsi.core.par_tool")   == "innovus" :
+#         handoff_dir = f"{x.run_dir}/handoff"
+#         x.append(f'''
+# mkdir -p {handoff_dir}
+# # LEF file
+# write_lef_abstract -stripe_pins -pg_pin_layers met5 {handoff_dir}/{x.top_module}.lef
+
+def drc_blackboxes(x: HammerTool) -> bool:
+    modules = ['tdc_64']
+    if x.get_setting("vlsi.core.drc_tool")   == "hammer.drc.calibre" :
+        run_file = x.drc_run_file
+        with open(run_file, "a") as f:
+            for module in modules:
+                f.write(f"\nEXCLUDE CELL {module}")
+            f.write('\n')
+    return True
+
+def lvs_blackboxes(x: HammerTool) -> bool:
+    modules = ['tdc_64',
+               'simple_por',
+               'sky130_ef_io__vccd_lvc_clamped3_pad',
+               'sky130_ef_io__vddio_hvc_clamped_pad',
+               'sky130_ef_io_vssd_lvc_clamped3_pad',
+               'sky130_ef_io__vdda_hvc_clamped_pad',
+               'sky130_ef_io__vssa_hvc_clamped_pad',
+               'sky130_ef_io__analog_pad_esd2',
+               'sky130_ef_io__vssio_hvc_clamped_pad']
+    # NOTE: adding unrecognized devices here didn't work (e.g. SKY130_FD_PR__PFET_G5V0D10V5)
+    if x.get_setting("vlsi.core.lvs_tool")   == "hammer.lvs.calibre" :
+        run_file = x.lvs_run_file
+        with open(run_file, "a") as f:
+            for module in modules:
+                f.write(f"\nLVS BOX {module}")
+                f.write(f"\nLVS FILTER {module} OPEN")
+            f.write('\n')
+    return True
+
+def donttouch_iocells(x: HammerTool) -> bool:
+    x.append('set_dont_touch [get_db insts -if {.base_cell.name == sky130_ef_io__*}] true')
+    return True
+
+def flatten_analog_driver(x: HammerTool) -> bool:
+    # AnalogDriver is a kludge to get FIRRTL to understand how to connect nets
+    # together, they should get dissolved
+    x.append('ungroup [get_db hinsts -if {.module.name == AnalogDriver*}]')
+    return True
+
+def set_die_snap_to_mfg_grid(x: HammerTool) -> bool:
+    x.append('set_db floorplan_snap_die_grid manufacturing')
+    return True
+
+def force_bias_pins_nets(x: HammerTool) -> bool:
+    x.append('''
+connect_global_net VSSIO -netlist_override -power_domain HV -pin_base_name VNB -type pg_pin -verbose
+connect_global_net VDDIO -netlist_override -power_domain HV -pin_base_name VPB -type pg_pin -verbose
+connect_global_net VSS -netlist_override -power_domain AO -pin_base_name VNB -type pg_pin -verbose
+connect_global_net VDD -netlist_override -power_domain AO -pin_base_name VPB -type pg_pin -verbose
+''')
+    return True
+
+def efabless_ring_io(ht: HammerTool) -> bool:
+    # Copied from Harrison's version in hammer to make some adjustments:
+    # - global connections removed - now handled by CPF
+    # - add fixing of IO fillers
+    io_file = ht.get_setting("technology.sky130.io_file")
+    ht.append(f"read_io_file {io_file} -no_die_size_adjust")
+    p_nets = list(map(lambda s: s.name, ht.get_independent_power_nets()))
+    g_nets = list(map(lambda s: s.name, ht.get_independent_ground_nets()))
+    # TODO: put only a few supply tie cells instead of replacing all 20um?
+    ht.append('''
+# IO fillers
+#set io_fillers {sky130_ef_io__com_bus_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
+# Use slices connecting VCCHIB<>VCCD and VSWITCH<>VDDA
+set io_fillers {sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
+add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side top -filler_orient r0
+add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side right -filler_orient r270
+add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side bottom -filler_orient r180
+add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side left -filler_orient r90
+# Fix placement
+set io_filler_insts [get_db insts IO_FILLER_*]
+set_db $io_filler_insts .place_status fixed
+''')
+    # FIXME: do something better than hardcoding CPF path
+    ht.append("""
+# Reload CPF to assign domains to just-placed physical-only cells
+read_power_intent -cpf power_spec.cpf
+commit_power_intent
+""")
+    # bias pins not respected for some reason
+    force_bias_pins_nets(ht)
+    ht.append(f'''
+# Core ring
+add_rings -follow io -layer met5 -nets {{ {p_nets[0]} {g_nets[0]} }} -offset 5 -width 13 -spacing 3
+route_special -connect pad_pin -nets {{ {p_nets[0]} {g_nets[0]} }} -detailed_log
+''')
+    ht.append('''
+# Prevent buffering on TIE_LO_ESD and TIE_HI_ESD
+set_dont_touch [get_db [get_db pins -if {.name == *TIE*ESD}] .net]
+''')
+    return True
+
+def route_ties(x: HammerTool) -> bool:
+    x.append('''
+select_net [get_db [get_db pins -if {.name == */TIE_* && .base_pin.base_cell.name == sky130_*}] .net]
+route_design -selected
+deselect_net *
+''')
+    return True
+
+def patch_hvl_ls_lef(ht: HammerTool) -> bool:
+    # Treat HVL cells as if they were hard macros to avoid needing to set them
+    # up "properly" with multiple power domains
+
+    #lef_name = "sky130_fd_sc_hvl__lsbufhv2lv_1.lef"
+    lef_name = "sky130_fd_sc_hvl.lef"
+
+    sky130A_path = Path(ht.get_setting('technology.sky130.sky130A'))
+    source_path = sky130A_path / 'libs.ref' / 'sky130_fd_sc_hvl' / 'lef' / lef_name
+    cache_path = Path(ht.technology.cache_dir) / "fd_sc_hvl__lef" / lef_name
+    cache_path.parent.mkdir(exist_ok=True)
+
+    with source_path.open("r") as sf, cache_path.open("w") as df:
+        ht.logger.info(f"Patching HVL LS LEF: {source_path} -> {cache_path}")
+        is_in_site_def = False
+        is_in_macro_def = False
+        for line in sf:
+            if is_in_site_def:
+                if 'END unithv' in line:
+                    is_in_site_def = False
+            elif not is_in_macro_def and 'SITE unithv' in line:
+                is_in_site_def = True
+            elif 'MACRO ' in line:
+                is_in_macro_def = True
+                df.write(line)
+            elif 'SITE unithv' in line:
+                pass
+            else:
+                # there cannot be a 'class block antennacell'
+                df.write(line.replace("CLASS CORE", "CLASS BLOCK") if not (("ANTENNACELL" in line) or ("SPACER" in line)) else line)
+    return True
+
+def load_hv_def_routing(x: HammerTool) -> bool:
+    def_path = x.get_setting("design.def.hv_routing")
+    x.append(f'read_def {def_path}')
+    return True
+
+def connect_core_stripes(x: HammerTool) -> bool:
+    x.append('''
+route_special -connect floating_stripe -floating_stripe_target ring -nets {VDD VSS} -stripe_layer_range {met4 met5} -allow_jogging 0 -layer_change_range {met3 met5} -crossover_via_layer_range {met3 met5} -detailed_log
+''')
+    return True
+
+def pll_power(x: HammerTool) -> bool:
+    x.append('''
+# Rings for PLL
+deselect_obj -all
+select_obj inst:pllInst
+add_rings -layer met4 -nets {VSS} -offset 10 -width 7 -spacing 3 -around selected -type block_rings
+add_rings -layer met5 -nets {VDD} -offset 20 -width 7 -spacing 3 -around selected -type block_rings
+route_special -connect block_pin -block_pin_target block_ring -block_pin all -inst pllInst -nets {VDD VSS}
+deselect_obj -all
+
+proc expand_box {box margin} {                  
+  list [expr [lindex $box 0] - [lindex $margin 0]] [expr [lindex $box 1] - [lindex $margin 1]] [expr [lindex $box 2] + [lindex $margin 2]] [expr [lindex $box 3] + [lindex $margin 3]]
+}
+
+# Block off inside of rings for power strap routing
+set pll_route_blkgs_pre [get_db route_blockages]
+create_route_blockage -pg_nets -rects [list [expand_box [lindex [get_db inst:pllInst .bbox] 0] {10 10 10 10}]] -layers met2
+create_route_blockage -pg_nets -rects [list [expand_box [lindex [get_db inst:pllInst .bbox] 0] {10 10 10 10}]] -layers met3
+create_route_blockage -pg_nets -rects [list [expand_box [lindex [get_db inst:pllInst .bbox] 0] {10 10 10 10}]] -layers met4
+create_route_blockage -pg_nets -rects [list [expand_box [lindex [get_db inst:pllInst .bbox] 0] {20 20 20 20}]] -layers met5
+set pll_route_blkgs [lminus [get_db route_blockages] $pll_route_blkgs_pre]
+''')
+    return True
+
+class Driver(CLIDriver):
+    def get_extra_synthesis_hooks(self) -> List[HammerToolHookAction]:
+        return [
+            HammerTool.make_post_insertion_hook("init_environment", check_timing_intent),
+            HammerTool.make_post_insertion_hook("init_environment", dont_touch),
+            HammerTool.make_post_insertion_hook("init_environment", donttouch_iocells),
+            #HammerTool.make_pre_insertion_hook("syn_generic", derate_srams),
+            HammerTool.make_pre_insertion_hook("syn_generic", flatten_analog_driver),
+
+            HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
+        ]
+
+    def get_extra_par_hooks(self) -> List[HammerToolHookAction]:
+        return [
+            HammerTool.make_removal_hook("place_bumps"),
+
+            HammerTool.make_pre_insertion_hook("floorplan_design", print_macros),
+
+            #HammerTool.make_pre_insertion_hook("place_opt_design", derate_srams),
+
+            HammerTool.make_post_insertion_hook("init_design", set_routing_layers),
+
+            # move fillers step to after opt_design
+            HammerTool.make_removal_hook("add_fillers"),
+            HammerTool.make_post_insertion_hook("opt_design", add_fillers),
+
+            # add final signoff timing
+            # TODO: re-add once we care about timing (DRC/LVS sane)
+            # HammerTool.make_pre_insertion_hook("write_design", signoff_timing),
+
+            # # write final files
+            # HammerTool.make_post_insertion_hook("write_design", write_top_files),
+
+            HammerTool.make_pre_insertion_hook("floorplan_design", set_die_snap_to_mfg_grid),
+            HammerTool.make_post_insertion_hook("floorplan_design", efabless_ring_io),
+            HammerTool.make_post_insertion_hook("efabless_ring_io", load_hv_def_routing),
+            #HammerTool.make_pre_insertion_hook("power_straps", pll_power),
+            #HammerTool.make_post_insertion_hook("power_straps", connect_core_stripes),
+            HammerTool.make_pre_insertion_hook("place_pins", connect_core_stripes),
+
+            HammerTool.make_pre_insertion_hook("write_design", force_bias_pins_nets),
+
+            HammerTool.make_post_insertion_hook("sky130_innovus_settings", enable_clock_antenna_insertion),
+
+            # Not needed with manual CPF flow
+            HammerTool.make_removal_hook("sky130_connect_nets"),
+            HammerTool.make_removal_hook("sky130_connect_nets2"),
+
+            HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
+        ]
+    
+    def get_extra_drc_hooks(self) -> List[HammerToolHookAction]:
+        return [
+            HammerTool.make_post_insertion_hook("generate_drc_run_file", drc_blackboxes)
+        ]
+    def get_extra_lvs_hooks(self) -> List[HammerToolHookAction]:
+        return [
+            HammerTool.make_post_insertion_hook("generate_lvs_run_file", lvs_blackboxes)
+        ]
+
+if __name__ == '__main__':
+    Driver().main()

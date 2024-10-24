@@ -255,8 +255,8 @@ class WithSPIFlashIOCells extends OverrideIOBinder({
       val iocellBase = s"iocell_${name}"
 
       // SCK and CS are unidirectional outputs
-      val sckIOs = IOCell.generateFromSignal(s.sck, port.sck, Some(s"${iocellBase}_sck"), p(IOCellKey), IOCell.toAsyncReset)
-      val csIOs = IOCell.generateFromSignal(s.cs, port.cs, Some(s"${iocellBase}_cs"), p(IOCellKey), IOCell.toAsyncReset)
+      val sckIOs = IOCell.generateFromSignal(s.sck, port.sck, s"${iocellBase}_sck", p(IOCellKey), IOCell.toAsyncReset)
+      val csIOs = IOCell.generateFromSignal(s.cs, port.cs, s"${iocellBase}_cs", p(IOCellKey), IOCell.toAsyncReset)
 
       // DQ are bidirectional, so then need special treatment
       val dqIOs = s.dq.zip(port.dq).zipWithIndex.map { case ((pin, ana), j) =>

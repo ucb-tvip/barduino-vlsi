@@ -1,0 +1,71 @@
+# for now a copy of pin-map-stac.yml TODO remove stuff related to srams, we prob just want to keep serial tl and a clock
+pins:
+  S2: reset
+  S3: clock
+  S5: jtag_TCK
+  S6: jtag_TMS
+  S7: jtag_TDI
+  S8: jtag_TDO
+  N11: custom_boot
+  W10: uart_0_txd
+  W11: uart_0_rxd
+  E20: serial_tl_0_clock_in
+  W19: serial_tl_0_in_valid
+  W18: serial_tl_0_out_bits_phit
+  W17: serial_tl_0_in_bits_phit
+  W16: serial_tl_0_in_ready
+  W15: serial_tl_0_out_valid
+  W14: serial_tl_0_out_ready
+  # E19: spi_0_sck
+  # E18: spi_0_cs_0
+  # E17: spi_0_dq_3
+  # E16: spi_0_dq_2
+  # E15: spi_0_dq_1
+  # E14: spi_0_dq_0
+  # W1: sram_bist_sramSaeClk
+  # W5: sram_bist_sramScanIn
+  # W6: sram_bist_sramScanOut
+  # W7: sram_bist_sramScanEn
+  # N1: sram_bist_bistStart
+  # N2: sram_bist_sramScanMode
+  # N3: sram_bist_sramEn
+  # N4: sram_bist_bistEn
+  # N5: sram_bist_sramExtEn
+  # W8: sram_bist_bistDone
+  # N7: pll_arstb
+  # N8: pll_scan_out
+  # E5: pll_div_out
+  # E1: pll_ref_in
+  # E3: pll_clk_out
+  # N9: pll_scan_in
+  # E6: pll_scan_clk
+  # E7: pll_scan_rst
+  # E8: pll_scan_en
+  # E9: pll_sel
+  #S9: clksel_0
+  #E10: clksel_1
+extra_insts:
+  bottom:
+    - name: IO_FILLER_MANUAL_S_1
+      offset: 813
+      cell: sky130_ef_io__com_bus_slice_20um
+    - name: IO_FILLER_MANUAL_S_2
+      offset: 3264
+      cell: sky130_ef_io__com_bus_slice_20um
+  left:
+    - name: IO_FILLER_MANUAL_W_1 # W22 R
+      offset: 415
+      cell: sky130_ef_io__com_bus_slice_20um
+    - name: IO_FILLER_MANUAL_W_2 # W13 R
+      offset: 2279
+      cell: sky130_ef_io__com_bus_slice_20um
+    - name: IO_FILLER_MANUAL_W_3 # W2 R
+      offset: 4635
+      cell: sky130_ef_io__com_bus_slice_20um
+  right:
+    - name: IO_FILLER_MANUAL_E_1 # E2 R
+      offset: 4593
+      cell: sky130_ef_io__com_bus_slice_20um
+    - name: IO_FILLER_MANUAL_E_2 # E12 R
+      offset: 2354
+      cell: sky130_ef_io__com_bus_slice_20um
