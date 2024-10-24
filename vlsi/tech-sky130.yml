@@ -1,0 +1,28 @@
+# Technology Setup
+# Technology used is Sky130
+vlsi.core.technology: "hammer.technology.sky130"
+
+vlsi.core.max_threads: 12
+
+# Sky130 paths
+technology.sky130:
+  sram22_sky130_macros: "/home/ff/eecs251b/sky130/sram22_sky130_macros"  
+
+  sky130_cds:    "/home/ff/eecs151/fa24/pdk/sky130_release_0.0.4/"
+  sky130_scl: "/home/ff/eecs151/fa24/pdk/sky130_scl_9T_0.0.5/"
+  sky130A: "/home/ff/eecs151/fa24/pdk/sky130A/"
+  sky130_nda: "/home/ff/eecs151/fa24/pdk/sky130_release_0.0.4/" # TODO this should be merged with cds
+  stdcell_library: "sky130_scl"
+  #stdcell_library: "sky130_fd_sc_hd"
+  lvs_blackbox_srams: true
+  drc_blackbox_srams: true
+
+  # for caravel collateral pulled in by this design
+  caravel: /home/ff/ee198/ee198-20/caravel
+  esd: /home/ff/ee198/ee198-20/sky130_esd
+
+# for sky130_scl
+technology.core.stackup: "sky130_scl"
+#technology.core.stackup: "sky130_fd_sc_hd"
+vlsi.technology.placement_site: "CoreSite"
+
