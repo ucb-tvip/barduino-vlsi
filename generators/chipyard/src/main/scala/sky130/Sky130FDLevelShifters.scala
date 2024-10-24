@@ -1,7 +1,6 @@
 package chipyard.sky130
 
 import chisel3._
-import chisel3.util.HasBlackBoxResource
 
 object Sky130FDLevelShifters {
   object defaults {
@@ -15,15 +14,11 @@ class Sky130FDLevelShifterIO extends Bundle {
   val X = Output(Bool())
 }
 
-class Sky130FDLevelShifter(cellName: String, sim: Boolean = false) extends BlackBox with HasBlackBoxResource {
+class Sky130FDLevelShifter(cellName: String) extends BlackBox {
   val io = IO(new Sky130FDLevelShifterIO)
 
   val in = io.A
   val out = io.X
 
   override val desiredName = cellName
-
-  if (sim) {
-    addResource("/vsrc/sky130_iocells/sky130_fd_sc_hvl__lsbufhv2lv_1.dummy.v")
-  }
 }

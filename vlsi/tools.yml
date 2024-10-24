@@ -1,37 +1,34 @@
+# # Tool options
+
+# Generate Make include to aid in flow
 vlsi.core.build_system: make
 # Genus options
 vlsi.core.synthesis_tool: "hammer.synthesis.genus"
-synthesis.genus.version: "211"
-synthesis.genus.genus_bin: "/tools/cadence/GENUS/GENUS211/bin/genus"
-
+synthesis.genus.genus_bin: "/share/instsww/cadence/DDI221/GENUS221/bin/genus"
 # Innovus options
 vlsi.core.par_tool: "hammer.par.innovus"
-par.innovus.version: "211"
-par.innovus.innovus_bin: "/tools/cadence/INNOVUS/INNOVUS211/bin/innovus"
-par.innovus.design_flow_effort: "standard"
 par.inputs.gds_merge: true
-# Calibre options
-vlsi.core.drc_tool: "hammer.drc.calibre"
-drc.calibre.version: "2022.2_24.16"
-vlsi.core.lvs_tool: "hammer.lvs.calibre"
-lvs.calibre.version: "2022.2_24.16"
+# Pegasus options
+vlsi.core.drc_tool: "hammer.drc.pegasus"
+drc.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
+vlsi.core.lvs_tool: "hammer.lvs.pegasus"
+lvs.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
 # VCS options
 vlsi.core.sim_tool: "hammer.sim.vcs"
 sim.vcs.version: "S-2021.09-SP1-1"
 # Voltus options
-vlsi.core.power_tool: "hammer.power.voltus"
+vlsi.core.power_tool: "hammer.power.joules"
 power.joules.version: "211"
-power.voltus.version: "211_ISR3"
 
-# Commercial tool licenses/paths
-mentor.mentor_home: "/tools/mentor"
-mentor.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"
+# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
+vlsi.inputs.power_spec_mode: "auto"
+vlsi.inputs.power_spec_type: "cpf"
 
-cadence.cadence_home: "/tools/cadence"
-cadence.CDS_LIC_FILE: "5280@bwrcflex-1.eecs.berkeley.edu:5280@bwrcflex-2.eecs.berkeley.edu"
+# gets overwritten if we leave it in tools for some reason
+par.innovus:
+  innovus_bin: "/share/instsww/cadence/DDI221/INNOVUS221/bin/innovus"
+  version: "221"
+  design_flow_effort: "standard"
 
-synopsys.synopsys_home: "/tools/synopsys"
-synopsys.SNPSLMD_LICENSE_FILE: "1701@bwrcflex-1.eecs.berkeley.edu:1701@bwrcflex-2.eecs.berkeley.edu"
-synopsys.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"
-
-
+# SRAM Compiler compiler options
+vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"

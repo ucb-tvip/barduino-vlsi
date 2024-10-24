@@ -9,7 +9,7 @@ import sys
 import json
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, RootModel
 
 PinData = str
 
@@ -22,8 +22,8 @@ class IOMap(BaseModel):
 class DesignInfoInst(BaseModel):
     name: str
 
-class DesignInfo(BaseModel):
-    __root__: list[DesignInfoInst]
+class DesignInfo(RootModel):
+    root: list[DesignInfoInst]
 
 
 cell_locations: dict[str, int | float] = {
@@ -39,38 +39,38 @@ cell_locations: dict[str, int | float] = {
     "N10": 2878,
     "N11": 3130,
 
-    "E20": 500,
-    "E19": 726,
-    "E18": 951,
-    "E17": 1177,
-    "E16": 1402,
-    "E15": 1627,
-    "E14": 1853,
-    "E13": 2078,
-    "E12": 2299,
-    "E11": 2519,
-    "E10": 2739,
-    "E9": 2965,
-    "E8": 3190,
-    "E7": 3416,
-    "E6": 3641,
-    "E5": 3871,
-    "E4": 4092,
-    "E3": 4312,
-    "E2": 4538,
-    "E1": 4758,
+    "E20": 580,
+    "E19": 806,
+    "E18": 1031,
+    "E17": 1257,
+    "E16": 1482,
+    "E15": 1707,
+    "E14": 1933,
+    "E13": 2153,
+    "E12": 2374,
+    "E11": 2594,
+    "E10": 2819,
+    "E9": 3045,
+    "E8": 3270,
+    "E7": 3496,
+    "E6": 3721,
+    "E5": 3946,
+    "E4": 4167,
+    "E3": 4392,
+    "E2": 4613,
+    "E1": 4838,
 
-    "S1": 394,
-    "S2": 663,
-    "S3": 932,
-    "S4": 1206,
-    "S5": 1475,
-    "S6": 1749,
-    "S7": 2023,
-    "S8": 2297,
-    "S9": 2571,
-    "S10": 2845,
-    "S11": 3114,
+    "S1": 469,
+    "S2": 738,
+    "S3": 1012,
+    "S4": 1281,
+    "S5": 1555,
+    "S6": 1829,
+    "S7": 2103,
+    "S8": 2377,
+    "S9": 2651,
+    "S10": 2920,
+    "S11": 3189,
 
     "W22": 340,
     "W21": 551,
@@ -309,7 +309,7 @@ def generate_iofile(iomap: IOMap, design_info: DesignInfo | None) -> IOFileModel
         if has_dupe_insts:
             raise RuntimeError("Duplicate instances generated")
         logic_insts_set = {cast(str, e["name"]) for e in logic_insts}
-        design_insts_set = {get_inst_path_for_signal(e.name) for e in design_info.__root__}
+        design_insts_set = {get_inst_path_for_signal(e.name) for e in design_info.root}
         if logic_insts_set != design_insts_set:
             print(f"Insts in design but not pin-map: {design_insts_set - logic_insts_set}", file=sys.stderr)
             print(f"Insts in pin-map but not design: {logic_insts_set - design_insts_set}", file=sys.stderr)

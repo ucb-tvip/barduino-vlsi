@@ -38,3 +38,22 @@ class OFORawConfig
       //new freechips.rocketchip.subsystem.WithNBanks(0) ++             // remove L2$
       new chipyard.config.AbstractConfig
     )
+
+class OFOTConfig extends Config( // toplevel
+
+// heavily referencing STACConfig
+new testchipip.serdes.WithSerialTLWidth(1) ++
+// TODO looks like this has been removed- is it default now?
+//new chipyard.config.WithSerialTLBackingMemory ++                                      // Backing memory is over serial TL protocol
+
+
+
+  new chipyard.clocking.WithSingleClockBroadcastClockGenerator(freqMHz = 5) ++
+ new chipyard.sky130.WithSky130EFIOCells ++
+ new chipyard.sky130.WithSky130EFIOTotalCells(46) ++
+ new chipyard.sky130.WithSky130ChipTop ++
+ new chipyard.config.WithBroadcastManager ++                      // Replace L2 with a broadcast hub for coherence
+ new freechips.rocketchip.subsystem.WithCoherentBusTopology ++
+
+ new OFORocketConfig  
+  )

@@ -5,38 +5,6 @@ vlsi.core.build_system: make
 technology.sky130.drc_blackbox_srams: true
 technology.sky130.lvs_blackbox_srams: true
 
-# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
-vlsi.inputs.power_spec_mode: auto
-vlsi.inputs.power_spec_type: cpf
-# Power Straps
-par.power_straps_mode: generate
-par.generate_power_straps_method: by_tracks
-par.blockage_spacing: 2.0
-par.blockage_spacing_top_layer: met3
-par.generate_power_straps_options:
-  by_tracks:
-    strap_layers:
-      - met2
-      - met3
-      - met4
-      - met5
-    pin_layers:
-      - met5
-    blockage_spacing_met2: 4.0
-    blockage_spacing_met4: 2.0
-    track_width: 2
-    track_width_met2: 2
-    track_width_met3: 2
-    track_width_met4: 2
-    track_width_met5: 2
-    track_spacing: 5
-    track_start: 10
-    track_start_met5: 1
-    power_utilization: 0.4
-    power_utilization_met4: 0.4
-    power_utilization_met5: 0.5
-
-
 vlsi.inputs:
   power_spec_type: cpf
   power_spec_mode: manual
@@ -55,13 +23,9 @@ vlsi.inputs:
   top_module: ChipTop
 
   clocks:
-    # primary clock (for all TL busses)
-    - {name: "clock", path: "clock", period: "200ns", uncertainty: "0.1ns"}
-    # serial tl clock
-    - {name: "tl_clock", path: "iocell_serial_tl_0_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
-    # jtag clock
-    - {name: "jtag_TCK", path: "iocell_jtag_TCK/iocell/IN", period: "200ns", uncertainty: "1ns"}
+    - {name: "clock", path: "iocell_clock/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
 
+  pin_mode: none
 
   placement_constraints:
     - path: ChipTop
@@ -71,146 +35,27 @@ vlsi.inputs:
       width: 3588
       height: 5188
       margins: {left: 249.78, right: 249.78, top: 252.08, bottom: 252.08}
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_1_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
-      type: hardmacro
-      x: 500
-      y: 1550
-      orientation: my90
-      top_layer: met2
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_0_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
-      type: hardmacro
-      x: 500
-      y: 855
-      orientation: my90
-      top_layer: met2
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
-      type: hardmacro
-      x: 500
-      y: 2151
-      orientation: my90
-      top_layer: met2
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
-      type: hardmacro
-      x: 500
-      y: 3076
-      orientation: my90
-      top_layer: met2
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_tag_array_0/rockettile_icache_tag_array_0_ext/mem_0_0"
-      type: hardmacro 
-      x: 1250
-      y: 3076
-      orientation: my90
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram0"
-      type: hardmacro
-      x: 1812.51
-      y: 2357.62
-      orientation: r270
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/meta_sram"
-      type: hardmacro
-      x: 2457.535
-      y: 3170.31
-      orientation: r270
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/meta_sram"
-      type: hardmacro
-      x: 1935.21
-      y: 3070.31
-      orientation: r270
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram1"
-      type: hardmacro
-      x: 1812.51
-      y: 1794.895
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram2"
-      type: hardmacro
-      x: 1812.51
-      y: 1222.47
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram3"
-      type: hardmacro
-      x: 1812.51
-      y: 659.745
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram0"
-      type: hardmacro
-      x: 2457.535
-      y: 2457.62
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram1"
-      type: hardmacro
-      x: 2457.535
-      y: 1894.895
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram2"
-      type: hardmacro
-      x: 2457.535
-      y: 1322.47
-      orientation: r270
-
-
-    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram3"
-      type: hardmacro
-      x: 2457.535
-      y: 759.745
-      orientation: r270
-
-
-# for the por
-    - path: ChipTop/system
-      type: obstruction
-      obs_types: [power, place, route]
-      layers: [met1]
-      x: 3243
-      y: 252
-      width: 34
-      height: 48
-
 design.def.hv_routing_meta: prependlocal
 design.def.hv_routing: ofo-hv-routing.def
 
 # Library stuff
-.local.library.sky130_fd_sc_hvl__lsbufhv2lv: &lib__sky130_fd_sc_hvl__lsbufhv2lv
+.local.library.sky130_fd_sc_hvl: &lib__sky130_fd_sc_hvl
   # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
-  gds_file: /tools/commercial/skywater/skywater-pdk/libraries/sky130_fd_sc_hvl/latest/cells/lsbufhv2lv/sky130_fd_sc_hvl__lsbufhv2lv_1.gds
-  lef_file: cache/fd_sc_hvl__lef/sky130_fd_sc_hvl__lsbufhv2lv_1.lef
-  spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_sc_hvl.cdl
+  gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
+  lef_file: cache/fd_sc_hvl__lef/sky130_fd_sc_hvl.lef
+  #lef_file: cache/fd_sc_hvl__lef/sky130_fd_sc_hvl__lsbufhv2lv_1.lef
+  spice_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/cdl/sky130_fd_sc_hvl.cdl
   # spice_file: /tools/C/nayiri/sky130/chipyard-jun23_tapeout/vlsi/sky130_fd_sc_hvl.cdl
-  verilog_sim: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl__lsbufhv2lv.functional.v
+  verilog_sim: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl.v
   provides:
     - lib_type: lvlshift
-      vt: RVT
-.local.library.MultiPLLTop: &lib__MultiPLLTop
-  # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
-  gds_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/gds/MutliPLLTop_clean_6_2_0156.gds
-  lef_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lef/MultiPLLTop.lef
-  spice_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/spice/MultiPLLTop.lvs.sp
-  # TODO: verilog sim
-  provides:
-    - lib_type: block
       vt: RVT
 
 vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.extra_libraries:
   - library:
-      spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/devices.sp
-  - library:
-      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
-  - library:
-      spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/sky130_fd_sc_hd.cdl
-  - library:
-      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      <<: *lib__sky130_fd_sc_hvl
+      #<<: *lib__sky130_fd_sc_hvl__lsbufhv2lv # this has been folded into  sky130_fd_sc_hvl
       nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ss_100C_1v65_lv1v60.lib
       corner:
         nmos: "slow"
@@ -220,7 +65,8 @@ vlsi.technology.extra_libraries:
         VDD: "1.60 V"
         GND: "0 V"
   - library:
-      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      <<: *lib__sky130_fd_sc_hvl
+      #<<: *lib__sky130_fd_sc_hvl__lsbufhv2lv # this has been folded into  sky130_fd_sc_hvl
       nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ff_n40C_5v50_lv1v95_ccsnoise.lib
       corner:
         nmos: "fast"
@@ -230,7 +76,8 @@ vlsi.technology.extra_libraries:
         VDD: "1.95 V"
         GND: "0 V"
   - library:
-      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      <<: *lib__sky130_fd_sc_hvl
+      #<<: *lib__sky130_fd_sc_hvl__lsbufhv2lv # this has been folded into  sky130_fd_sc_hvl
       nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__tt_025C_3v30_lv1v80.lib
       corner:
         nmos: "typical"
@@ -240,59 +87,25 @@ vlsi.technology.extra_libraries:
         VDD: "1.80 V"
         GND: "0 V"
   - library:
-      <<: *lib__MultiPLLTop
-      nldm_liberty_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lib/MutliPLLTop_ss_100C_1v60.lib
-      corner:
-        nmos: "slow"
-        pmos: "slow"
-        temperature: "100 C"
-      supplies:
-        VDD: "1.60 V"
-        GND: "0 V"
-  - library:
-      <<: *lib__MultiPLLTop
-      nldm_liberty_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lib/MultiPLLTop_ff_n40C_1v95.lib
-      corner:
-        nmos: "fast"
-        pmos: "fast"
-        temperature: "-40 C"
-      supplies:
-        VDD: "1.95 V"
-        GND: "0 V"
-  - library:
-      <<: *lib__MultiPLLTop
-      nldm_liberty_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lib/MultiPLLTop_tt_025C_1v80.lib
-      corner:
-        nmos: "typical"
-        pmos: "typical"
-        temperature: "025 C"
-      supplies:
-        VDD: "1.80 V"
-        GND: "0 V"
-  - library:
-      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io_with_overlay.gds
+      gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um.gds
       lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
-      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+      spice_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/spice/sky130_ef_io.spice
+      # spice_file: /tools/C/nayiri/sky130/chipyard-jun23_tapeout/vlsi/sky130_ef_io.spice
+      provides:
+        - lib_type: sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um
+          vt: RVT
   - library:
-      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.gds
-      lef_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.lef
-      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
-  - library:
-      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io__analog_pad_esd2.cdl
-      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__analog_pad_esd2.gds
-      lef_file: /tools/C/rohankumar/sky130/stac_tapeout/sky130_ef_io__analog_pad_esd2.lef
+      gds_file: ${technology.sky130.esd}/gds/sky130_ef_io__analog_pad_esd2.gds
+      lef_file: ${technology.sky130.esd}/lef/sky130_ef_io__analog_pad_esd2.lef
+      cdl_file: ${technology.sky130.esd}/cdl_out/sky130_ef_io__analog_pad_esd2.cdl
       provides:
         - lib_type: iocell
   - library:
       gds_file: ${technology.sky130.caravel}/gds/simple_por.gds
       lef_file: ${technology.sky130.caravel}/lef/simple_por.lef
-      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+      spice_file: ${technology.sky130.caravel}/spi/lvs/caravel.spice # TODO: which netlist to actually use?
+      # spice_file: ${technology.sky130.caravel}/spi/lvs/simple_por.spice # TODO: which netlist to actually use?
       verilog_sim: ${technology.sky130.caravel}/verilog/rtl/simple_por.v
       provides:
         - lib_type: por
           vt: RVT
-
-vlsi.inputs.dont_use_mode: append
-vlsi.inputs.dont_use_list_meta: append
-vlsi.inputs.dont_use_list:
-  - sky130_fd_sc_hvl__*

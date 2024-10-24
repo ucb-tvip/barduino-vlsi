@@ -4,8 +4,6 @@ import chisel3._
 import chisel3.experimental.BaseModule
 import freechips.rocketchip.diplomacy.{InModuleBody, LazyModule}
 import org.chipsalliance.cde.config.{Config, Field}
-import chisel3.util.HasBlackBoxResource
-import chisel3.util.HasBlackBoxInline
 
 class Sky130EFCaravelPORIO extends Bundle {
   // HV domain
@@ -22,23 +20,6 @@ trait HasSky130EFCaravelPORIO extends BaseModule {
 
 class Sky130EFCaravelPOR extends BlackBox with HasSky130EFCaravelPORIO {
   override val desiredName = "simple_por"
-}
-
-class Sky130EFCaravelPORDummyRTLModelVerilog extends BlackBox with HasSky130EFCaravelPORIO with HasBlackBoxInline {
-  // Oversimplified model for when the macro or behavioral model
-  // are not available / usable
-
-    setInline("Sky130EFCaravelPORDummyRTLModelVerilog.v",
-    """module Sky130EFCaravelPORDummyRTLModelVerilog(
-      |        output porb_h,
-      |        output porb_l,
-      |        output por_l
-      |);
-      |assign porb_h = 1'b1;
-      |assign porb_l = 1'b1;
-      |assign por_l = 1'b0;
-      |endmodule
-    """.stripMargin)
 }
 
 class Sky130EFCaravelPORDummyRTLModel extends Module with HasSky130EFCaravelPORIO {
@@ -75,7 +56,4 @@ class WithRealSky130EFCaravelPOR extends Config((_, _, _) => {
 })
 class WithDummySky130EFCaravelPOR extends Config((_, _, _) => {
   case Sky130EFCaravelPORKey => () => new Sky130EFCaravelPORDummyRTLModel
-})
-class WithVerilogDummySky130EFCaravelPOR extends Config((_, _, _) => {
-  case Sky130EFCaravelPORKey => () => new Sky130EFCaravelPORDummyRTLModelVerilog
 })
