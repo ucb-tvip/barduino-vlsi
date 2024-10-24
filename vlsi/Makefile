@@ -35,12 +35,15 @@ else
 endif
 
 ENV_YML            ?= $(vlsi_dir)/env.yml
-TECH_CONF          ?= example-$(tech_name).yml
-TOOLS_CONF         ?= example-tools.yml
-INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF)
-HAMMER_EXEC        ?= $(if $(filter $(tech_name),sky130),\
-                        ./example-vlsi-sky130,\
-                        ./example-vlsi)
+TECH_CONF          ?= tech-$(tech_name).yml
+TOOLS_CONF         ?= tools.yml
+CHIP_CONF         ?= design-ofo.yml
+INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF) $(CHIP_CONF)
+PIN_MAP            ?= pin-map-ofo.yml
+HAMMER_EXEC        ?= ./hammer-driver 
+# $(if $(filter $(tech_name),sky130),\
+                        # ./example-vlsi-sky130,\
+                        # ./example-vlsi)
 VLSI_TOP           ?= $(TOP)
 VLSI_MODEL_DUT_NAME ?= chiptop0
 # If overriding, this should be relative to $(vlsi_dir)
@@ -115,7 +118,7 @@ $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
 # synthesis input configuration
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
-GENERATED_CONFS = $(SYN_CONF)
+GENERATED_CONFS = $(SYN_CONF) $(IO_FILE_CONF)
 ifeq ($(CUSTOM_VLOG), )
 	GENERATED_CONFS += $(SRAM_CONF)
 endif
@@ -155,6 +158,20 @@ $(sim_files): $(SIM_FILE_REQS) $(ALL_MODS_FILELIST) | $(build_dir)
 include $(vlsi_dir)/sim.mk
 
 include $(vlsi_dir)/power.mk
+
+#########################################################################################
+# io / pin map
+#########################################################################################
+IO_FILE_CONF = $(OBJ_DIR)/io_map-input.yml
+IO_FILE = $(OBJ_DIR)/io_map.io
+
+$(IO_FILE): scripts/gen-io-file.py $(PIN_MAP) $(build_dir)/$(long_name).sky130io.json
+	$< $(PIN_MAP) -d $(build_dir)/$(long_name).sky130io.json -o $@
+
+$(IO_FILE_CONF): $(IO_FILE)
+	mkdir -p $(dir $@)
+	echo "technology.sky130.io_file: '$(notdir $(IO_FILE))'" >> $@
+	echo "technology.sky130.io_file_meta: \"prependlocal\"">> $@
 
 #########################################################################################
 # AUTO BUILD FLOW

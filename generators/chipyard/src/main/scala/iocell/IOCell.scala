@@ -61,17 +61,25 @@ class DigitalInIOCellBundle extends Bundle {
 }
 
 trait IOCell extends BaseModule {
-  var iocell_name: Option[String] = None
+  var signalName: Option[String] = None
+  var iocellName: Option[String] = None
 
-  /** Set IOCell name
-    * @param s Proposed name for the IOCell
-    *
-    * @return An inherited IOCell with given the proposed name
-    */
-  def suggestName(s: String): this.type = {
-    iocell_name = Some(s)
-    super.suggestName(s)
+  @deprecated("Use iocellName")
+  def iocell_name: Option[String] = iocellName
+
+  /**
+   * Set name of signal that this IOCell is for
+   *
+   * This generates a name for the IOCell instance itself.
+   *
+   * @param s signal name for this cell
+   * @return An inherited IOCell with given the proposed name
+   */
+  def named(s: String): this.type = {
+    signalName = Some(s)
+    suggestName(s"iocell_$s")
   }
+
 }
 
 trait AnalogIOCell extends IOCell {
@@ -164,6 +172,13 @@ endmodule"""
 }
 
 trait IOCellTypeParams {
+   /**
+   * Custom rules for IO cell instantiation - undefined points are handled by a
+   * default implementation
+   *
+   * Parameters: (name, coreSignal, padSignal)
+   */
+  val custom: PartialFunction[(String, Data, Data), Seq[IOCell]] = PartialFunction.empty
   def analog(): AnalogIOCell
   def gpio():   DigitalGPIOCell
   def input():  DigitalInIOCell
@@ -195,7 +210,8 @@ object IOCell {
   ): (T, Seq[IOCell]) = {
     val padSignal = IO(DataMirror.internal.chiselTypeClone[T](coreSignal)).suggestName(name)
     val resetFn = if (abstractResetAsAsync) toAsyncReset else toSyncReset
-    val iocells = IOCell.generateFromSignal(coreSignal, padSignal, Some(s"iocell_$name"), typeParams, resetFn)
+    val iocells = IOCell.generateFromSignal(coreSignal, padSignal, name, typeParams, resetFn)
+
     (padSignal, iocells)
   }
 
@@ -211,9 +227,9 @@ object IOCell {
   def generateFromSignal[T <: Data, R <: Reset](
     coreSignal:        T,
     padSignal:         T,
-    name:              Option[String] = None,
+    name:              String,
     typeParams:        IOCellTypeParams = GenericIOCellParams(),
-    concretizeResetFn: (Reset) => R = toSyncReset
+    concretizeResetFn: Reset => Reset = toSyncReset
   ): Seq[IOCell] = {
     def genCell[T <: Data](
       castToBool:   (T) => Bool,
@@ -223,20 +239,16 @@ object IOCell {
     ): Seq[IOCell] = {
       DataMirror.directionOf(coreSignal) match {
         case ActualDirection.Input => {
-          val iocell = typeParams.input()
-          name.foreach(n => {
-            iocell.suggestName(n)
-          })
+          val iocell = typeParams.input().named(name)
+
           coreSignal := castFromBool(iocell.io.i)
           iocell.io.ie := true.B
           iocell.io.pad := castToBool(padSignal)
           Seq(iocell)
         }
         case ActualDirection.Output => {
-          val iocell = typeParams.output()
-          name.foreach(n => {
-            iocell.suggestName(n)
-          })
+          val iocell = typeParams.output().named(name)
+
           iocell.io.o := castToBool(coreSignal)
           iocell.io.oe := true.B
           padSignal := castFromBool(iocell.io.pad)
@@ -249,8 +261,8 @@ object IOCell {
     def genCellForAsyncReset = genCell[AsyncReset](_.asBool, _.asAsyncReset) _
     def genCellForAbstractReset = genCell[Reset](_.asBool, concretizeResetFn) _
 
-    (coreSignal, padSignal) match {
-      case (coreSignal: Analog, padSignal: Analog) => {
+     val defaultInstantiator: PartialFunction[(String, Data, Data), Seq[IOCell]] = {
+      case (name, coreSignal: Analog, padSignal: Analog) => {
         if (coreSignal.getWidth == 0) {
           Seq()
         } else {
@@ -258,35 +270,29 @@ object IOCell {
             coreSignal.getWidth == 1,
             "Analogs wider than 1 bit are not supported because we can't bit-select Analogs (https://github.com/freechipsproject/chisel3/issues/536)"
           )
-          val iocell = typeParams.analog()
-          name.foreach(n => iocell.suggestName(n))
+          val iocell = typeParams.analog().named(name)
           iocell.io.core <> coreSignal
           padSignal <> iocell.io.pad
           Seq(iocell)
         }
       }
-      case (coreSignal: Clock, padSignal: Clock) => genCellForClock(coreSignal, padSignal)
-      case (coreSignal: AsyncReset, padSignal: AsyncReset) => genCellForAsyncReset(coreSignal, padSignal)
-      case (coreSignal: Bits, padSignal: Bits) => {
+       case (name, coreSignal: Clock, padSignal: Clock) => genCellForClock(coreSignal, padSignal)
+      case (name, coreSignal: AsyncReset, padSignal: AsyncReset) => genCellForAsyncReset(coreSignal, padSignal)
+      case (name, coreSignal: Bits, padSignal: Bits) =>
         require(padSignal.getWidth == coreSignal.getWidth, "padSignal and coreSignal must be the same width")
         if (padSignal.getWidth == 0) {
           // This dummy assignment will prevent invalid firrtl from being emitted
           DataMirror.directionOf(coreSignal) match {
             case ActualDirection.Input => coreSignal := 0.U
-            case _                     => {}
+            case _ => {}
           }
           Seq()
         } else {
           DataMirror.directionOf(coreSignal) match {
             case ActualDirection.Input => {
               val iocells = padSignal.asBools.zipWithIndex.map { case (sig, i) =>
-                val iocell = typeParams.input()
-                // Note that we are relying on chisel deterministically naming this in the index order (which it does)
-                // This has the side-effect of naming index 0 with no _0 suffix, which is how chisel names other signals
-                // An alternative solution would be to suggestName(n + "_" + i)
-                name.foreach(n => {
-                  iocell.suggestName(n)
-                })
+                val iocell = typeParams.input().named(if (padSignal.getWidth > 1) s"${name}_$i" else name)
+
                 iocell.io.pad := sig
                 iocell.io.ie := true.B
                 iocell
@@ -297,42 +303,41 @@ object IOCell {
             }
             case ActualDirection.Output => {
               val iocells = coreSignal.asBools.zipWithIndex.map { case (sig, i) =>
-                val iocell = typeParams.output()
-                // Note that we are relying on chisel deterministically naming this in the index order (which it does)
-                // This has the side-effect of naming index 0 with no _0 suffix, which is how chisel names other signals
-                // An alternative solution would be to suggestName(n + "_" + i)
-                name.foreach(n => {
-                  iocell.suggestName(n)
-                })
-                iocell.io.o := sig
-                iocell.io.oe := true.B
-                iocell
+              val iocell = typeParams.output().named(if (padSignal.getWidth > 1) s"${name}_$i" else name)
+
+              iocell.io.o := sig
+              iocell.io.oe := true.B
+              iocell
               }
               // Note that the reverse here is because Cat(Seq(a,b,c,d)) yields abcd, but a is index 0 of the Seq
               padSignal := Cat(iocells.map(_.io.pad).reverse)
               iocells
             }
             case _ => throw new Exception("Bits signal does not have a direction and cannot be matched to IOCell(s)")
-          }
         }
       }
-      case (coreSignal: Reset, padSignal: Reset) => genCellForAbstractReset(coreSignal, padSignal)
-      case (coreSignal: Vec[_], padSignal: Vec[_]) => {
+      case (name, coreSignal: Reset, padSignal: Reset) => genCellForAbstractReset(coreSignal, padSignal)
+      case (name, coreSignal: Vec[_], padSignal: Vec[_]) => {
         require(padSignal.size == coreSignal.size, "size of Vec for padSignal and coreSignal must be the same")
         coreSignal.zip(padSignal).zipWithIndex.foldLeft(Seq.empty[IOCell]) { case (total, ((core, pad), i)) =>
-          val ios = IOCell.generateFromSignal(core, pad, name.map(_ + "_" + i), typeParams)
+          val ios = IOCell.generateFromSignal(core, pad, s"${name}_$i", typeParams)
+
           total ++ ios
         }
       }
-      case (coreSignal: Record, padSignal: Record) => {
+      case (name, coreSignal: Record, padSignal: Record) => {
         coreSignal.elements.foldLeft(Seq.empty[IOCell]) { case (total, (eltName, core)) =>
           val pad = padSignal.elements(eltName)
-          val ios = IOCell.generateFromSignal(core, pad, name.map(_ + "_" + eltName), typeParams)
+
+          val ios = IOCell.generateFromSignal(core, pad, s"${name}_$eltName", typeParams)
+
           total ++ ios
         }
       }
       case _ => { throw new Exception("Oops, I don't know how to handle this signal.") }
     }
+        typeParams.custom.orElse(defaultInstantiator)(name, coreSignal, padSignal)
+
   }
 
 }
