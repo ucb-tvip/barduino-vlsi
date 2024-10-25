@@ -23,7 +23,13 @@ vlsi.inputs:
   top_module: ChipTop
 
   clocks:
-    - {name: "clock", path: "iocell_clock/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
+    # primary clock (for all TL busses)
+    - {name: "clock", path: "clock", period: "200ns", uncertainty: "0.1ns"}
+    # serial tl clock
+    - {name: "tl_clock", path: "iocell_serial_tl_0_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
+    # jtag clock
+    - {name: "jtag_TCK", path: "iocell_jtag_TCK/iocell/IN", period: "200ns", uncertainty: "1ns"}
+
 
   pin_mode: none
 
@@ -35,6 +41,37 @@ vlsi.inputs:
       width: 3588
       height: 5188
       margins: {left: 249.78, right: 249.78, top: 252.08, bottom: 252.08}
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_1_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+      type: hardmacro
+      x: 300
+      y: 1350
+      orientation: my90
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_0_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+      type: hardmacro
+      x: 300
+      y: 855
+      orientation: my90
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+      type: hardmacro
+      x: 403.607
+      y: 1789.495
+      orientation: my90
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
+      type: hardmacro
+      x: 642.024
+      y: 2387.936
+      orientation: my90
+
+# for the por
+    - path: ChipTop/system
+      type: obstruction
+      obs_types: [power, place, route]
+      layers: [met1]
+      x: 3243
+      y: 252
+      width: 34
+      height: 48 
+
 design.def.hv_routing_meta: prependlocal
 design.def.hv_routing: ofo-hv-routing.def
 
