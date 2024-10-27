@@ -70,7 +70,7 @@ vlsi.inputs:
       x: 3243
       y: 252
       width: 34
-      height: 48 
+      height: 60
 
 design.def.hv_routing_meta: prependlocal
 design.def.hv_routing: ofo-hv-routing.def
@@ -140,9 +140,13 @@ vlsi.technology.extra_libraries:
   - library:
       gds_file: ${technology.sky130.caravel}/gds/simple_por.gds
       lef_file: ${technology.sky130.caravel}/lef/simple_por.lef
-      spice_file: ${technology.sky130.caravel}/spi/lvs/caravel.spice # TODO: which netlist to actually use?
-      # spice_file: ${technology.sky130.caravel}/spi/lvs/simple_por.spice # TODO: which netlist to actually use?
+      #spice_file: ${technology.sky130.caravel}/spi/lvs/caravel.spice # TODO: which netlist to actually use?
+      spice_file: ${technology.sky130.caravel}/spi/lvs/simple_por.spice # TODO: which netlist to actually use?
       verilog_sim: ${technology.sky130.caravel}/verilog/rtl/simple_por.v
       provides:
         - lib_type: por
           vt: RVT
+vlsi.inputs.dont_use_mode: append
+vlsi.inputs.dont_use_list_meta: append
+vlsi.inputs.dont_use_list:
+  - sky130_fd_sc_hvl__*
