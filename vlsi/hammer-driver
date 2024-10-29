@@ -108,16 +108,6 @@ def drc_blackboxes(x: HammerTool) -> bool:
             f.write('\n')
     return True
 
-def pegasus_lvs_hacks(x: HammerTool) -> bool:
-    # the caravel spice netlists use slashes for hirearchical connections in port definitions, this being default (yes) casues port number mismatch
-
-    if x.get_setting("vlsi.core.lvs_tool")   == "hammer.lvs.pegasus":
-        run_file = x.lvs_ctl_file
-        with open(run_file, "a") as f:
-            f.write("\nlvs_spice no -slash_is_space\n")
-            f.write('\n')
-    return True
-
 
 def lvs_blackboxes(x: HammerTool) -> bool:
     modules = ['tdc_64',
