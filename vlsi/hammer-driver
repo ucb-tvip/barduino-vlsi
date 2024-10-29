@@ -9,6 +9,18 @@ from hammer.technology.sky130 import SKY130Tech
 
 import json
 
+# TODO is it ok to blackbox simple_por? there are some licon.1 violations on it
+IO_CELLS_TO_BLACKBOX_FOR_PEGASUS = [
+
+    # since these are from 130a (fd_ef_io), not cadence libs, they won't pass pegasus DRC
+    "sky130_ef_io__gpiov2_pad_wrapped", "sky130_fd_io__top_xres4v2", "sky130_fd_sc_hvl__lsbufhv2lv_1",
+    # same logic with clamps
+    "sky130_ef_io__vccd_lvc_clamped_pad","sky130_ef_io__vssd_lvc_clamped_pad"
+
+    # kinda sus, check with STAC folks
+    "por",
+]
+# AND4x1 has m1.4 violations
 
 def check_timing_intent(x: HammerTool) -> bool:
     x.append('check_timing_intent -verbose')
@@ -85,7 +97,24 @@ def drc_blackboxes(x: HammerTool) -> bool:
             for module in modules:
                 f.write(f"\nEXCLUDE CELL {module}")
             f.write('\n')
+    elif x.get_setting("vlsi.core.drc_tool")   == "hammer.drc.pegasus" :
+        run_file = x.drc_ctl_file
+        with open(run_file, "a") as f:
+            for module in modules + IO_CELLS_TO_BLACKBOX_FOR_PEGASUS:
+                f.write(f"\nexclude_cell {module}")
+            f.write('\n')
     return True
+
+def pegasus_lvs_hacks(x: HammerTool) -> bool:
+    # the caravel spice netlists use slashes for hirearchical connections in port definitions, this being default (yes) casues port number mismatch
+
+    if x.get_setting("vlsi.core.lvs_tool")   == "hammer.lvs.pegasus":
+        run_file = x.lvs_ctl_file
+        with open(run_file, "a") as f:
+            f.write("\nlvs_spice no -slash_is_space\n")
+            f.write('\n')
+    return True
+
 
 def lvs_blackboxes(x: HammerTool) -> bool:
     modules = ['tdc_64',
@@ -104,6 +133,12 @@ def lvs_blackboxes(x: HammerTool) -> bool:
             for module in modules:
                 f.write(f"\nLVS BOX {module}")
                 f.write(f"\nLVS FILTER {module} OPEN")
+            f.write('\n')
+    elif x.get_setting("vlsi.core.lvs_tool")   == "hammer.lvs.pegasus" :
+        run_file = x.lvs_ctl_file
+        with open(run_file, "a") as f:
+            for module in modules + IO_CELLS_TO_BLACKBOX_FOR_PEGASUS:
+                f.write(f"\nlvs_black_box {module} -gray")
             f.write('\n')
     return True
 
@@ -156,14 +191,16 @@ set_db $io_filler_insts .place_status fixed
     ht.append("""
 # Reload CPF to assign domains to just-placed physical-only cells
 read_power_intent -cpf power_spec.cpf
-commit_power_intent
+commit_power_intent -verbose
 """)
-    # bias pins not respected for some reason
+     # bias pins not respected for some reason
     force_bias_pins_nets(ht)
+    print("NOTE removing routing io cells to ring for now since it's falsely routing filler cells to VDD")
+    # letting normal routing route used io slices to the ring
     ht.append(f'''
 # Core ring
 add_rings -follow io -layer met5 -nets {{ {p_nets[0]} {g_nets[0]} }} -offset 5 -width 13 -spacing 3
-route_special -connect pad_pin -nets {{ {p_nets[0]} {g_nets[0]} }} -detailed_log
+#route_special -connect pad_pin -nets {{ {p_nets[0]} {g_nets[0]} }} -detailed_log
 ''')
     ht.append('''
 # Prevent buffering on TIE_LO_ESD and TIE_HI_ESD
