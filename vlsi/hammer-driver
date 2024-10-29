@@ -15,10 +15,13 @@ IO_CELLS_TO_BLACKBOX_FOR_PEGASUS = [
     # since these are from 130a (fd_ef_io), not cadence libs, they won't pass pegasus DRC
     "sky130_ef_io__gpiov2_pad_wrapped", "sky130_fd_io__top_xres4v2", "sky130_fd_sc_hvl__lsbufhv2lv_1",
     # same logic with clamps
-    "sky130_ef_io__vccd_lvc_clamped_pad","sky130_ef_io__vssd_lvc_clamped_pad"
+    "sky130_ef_io__vccd_lvc_clamped_pad","sky130_ef_io__vssd_lvc_clamped_pad", "sky130_ef_io__vssd_lvc_clamped3_pad", "sky130_ef_io__vccd_lvc_clamped3_pad",
 
     # kinda sus, check with STAC folks
-    "por",
+    "simple_por",
+
+    # SUPER SUS CHECK WITH CADENCE
+    "AND4X1"
 ]
 # AND4x1 has m1.4 violations
 
@@ -335,12 +338,13 @@ class Driver(CLIDriver):
         ]
     
     def get_extra_drc_hooks(self) -> List[HammerToolHookAction]:
+        # TODO swap on tool, is run_file for calibre ctl-file for pegasus
         return [
-            HammerTool.make_post_insertion_hook("generate_drc_run_file", drc_blackboxes)
+            HammerTool.make_post_insertion_hook("generate_drc_ctl_file", drc_blackboxes)
         ]
     def get_extra_lvs_hooks(self) -> List[HammerToolHookAction]:
         return [
-            HammerTool.make_post_insertion_hook("generate_lvs_run_file", lvs_blackboxes)
+            HammerTool.make_post_insertion_hook("generate_lvs_ctl_file", lvs_blackboxes)
         ]
 
 if __name__ == '__main__':
