@@ -216,31 +216,6 @@ deselect_net *
 ''')
     return True
 
-def patch_ef_io_lef(ht: HammerTool) -> bool:
-    # treat io fillers as PAD SPACER instead of PAD AREAIO to 
-    # (TODO VERIFY) prevent them from being incorrectly connected to the core ring
-
-    lef_name = "sky130_ef_io.lef"
-
-    sky130A_path = Path(ht.get_setting('technology.sky130.sky130A'))
-    source_path = sky130A_path / 'libs.ref' / 'sky130_fd_io' / 'lef' / lef_name
-    cache_path = Path(ht.technology.cache_dir) / lef_name
-    cache_path.parent.mkdir(exist_ok=True)
-    io_fillers = ["sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um","sky130_ef_io__com_bus_slice_10um","sky130_ef_io__com_bus_slice_5um","sky130_ef_io__com_bus_slice_1um"]
-
-    with source_path.open("r") as sf, cache_path.open("w") as df:
-        ht.logger.info(f"Patching IO LEF: {source_path} -> {cache_path}")
-        is_filler = False
-        for line in sf:
-            if any([line.strip("MACRO ") == filler for filler in io_fillers]):
-                is_filler = True
-                continue
-            if is_filler:
-                df.write(line.replace("CLASS PAD AREAIO", "CLASS PAD SPACER"))
-                is_filler = False
-            else:
-                df.write(line)
-    return True
 def patch_hvl_ls_lef(ht: HammerTool) -> bool:
     # Treat HVL cells as if they were hard macros to avoid needing to set them
     # up "properly" with multiple power domains
@@ -318,7 +293,6 @@ class Driver(CLIDriver):
             HammerTool.make_pre_insertion_hook("syn_generic", flatten_analog_driver),
 
             HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
-            HammerTool.make_persistent_hook(patch_ef_io_lef),  # abuse persistent steps to chuck stuff in cache
         ]
 
     def get_extra_par_hooks(self) -> List[HammerToolHookAction]:
@@ -358,17 +332,15 @@ class Driver(CLIDriver):
             HammerTool.make_removal_hook("sky130_connect_nets2"),
 
             HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
-            HammerTool.make_persistent_hook(patch_ef_io_lef),  # abuse persistent steps to chuck stuff in cache
         ]
     
     def get_extra_drc_hooks(self) -> List[HammerToolHookAction]:
         return [
-            HammerTool.make_post_insertion_hook("generate_drc_ctl_file", drc_blackboxes)
+            HammerTool.make_post_insertion_hook("generate_drc_run_file", drc_blackboxes)
         ]
     def get_extra_lvs_hooks(self) -> List[HammerToolHookAction]:
         return [
-            HammerTool.make_post_insertion_hook("generate_lvs_ctl_file", pegasus_lvs_hacks),
-            HammerTool.make_post_insertion_hook("generate_lvs_ctl_file", lvs_blackboxes)
+            HammerTool.make_post_insertion_hook("generate_lvs_run_file", lvs_blackboxes)
         ]
 
 if __name__ == '__main__':
