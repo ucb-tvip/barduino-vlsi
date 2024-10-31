@@ -16,6 +16,8 @@ lvs.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
 # VCS options
 vlsi.core.sim_tool: "hammer.sim.vcs"
 sim.vcs.version: "S-2021.09-SP1-1"
+sim.vcs.vcs_home: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/"
+sim.vcs.vcs_bin: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/bin/vcs"
 # Voltus options
 vlsi.core.power_tool: "hammer.power.joules"
 power.joules.version: "211"
