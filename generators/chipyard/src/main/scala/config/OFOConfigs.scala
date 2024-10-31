@@ -43,11 +43,13 @@ class OFORawConfig
     )
 
 class OFOTConfig extends Config( // toplevel
+//TODO Remove Simulation collateral
+  new chipyard.sky130.WithVerilogDummySky130EFCaravelPOR ++
 
 // heavily referencing STACConfig and ChipLikeConfig
 // don't have enough area for these
- new chipyard.config.WithBroadcastManager ++                      // Replace L2 with a broadcast hub for coherence
-   new testchipip.soc.WithNoScratchpads ++                      // No scratchpads
+  new chipyard.config.WithBroadcastManager ++                      // Replace L2 with a broadcast hub for coherence
+  new testchipip.soc.WithNoScratchpads ++                      // No scratchpads
  //==================================
   // Set up I/O
   //==================================
@@ -77,7 +79,7 @@ class OFOTConfig extends Config( // toplevel
 
 
   // set up io ring
- new chipyard.sky130.WithSky130EFIOCells ++
+ new chipyard.sky130.WithSky130EFIOCells(sim = true) ++
  new chipyard.sky130.WithSky130EFIOTotalCells(46) ++
  new chipyard.sky130.WithSky130ChipTop ++
  new freechips.rocketchip.subsystem.WithCoherentBusTopology ++
