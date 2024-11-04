@@ -46,20 +46,29 @@ vlsi.inputs:
       x: 300
       y: 1350
       orientation: my90
+      top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_0_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
       type: hardmacro
       x: 300
       y: 855
       orientation: my90
+      top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
       type: hardmacro
-      x: 403.607
-      y: 1789.495
+      x: 300
+      y: 1862.946
       orientation: my90
+      top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
       type: hardmacro
-      x: 642.024
-      y: 2387.936
+      x: 300
+      y: 2728.96
+      orientation: my90
+      top_layer: met2
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_tag_array_0/rockettile_icache_tag_array_0_ext/mem_0_0"
+      type: hardmacro 
+      x: 1000
+      y: 2758.155
       orientation: my90
 
 # for the por

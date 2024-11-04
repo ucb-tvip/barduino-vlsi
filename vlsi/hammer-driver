@@ -21,7 +21,7 @@ IO_CELLS_TO_BLACKBOX_FOR_PEGASUS = [
     "simple_por",
 
     # SUPER SUS CHECK WITH CADENCE
-    "AND4X1"
+    #"AND4X1"
 ]
 # AND4x1 has m1.4 violations
 
@@ -67,6 +67,7 @@ def enable_clock_antenna_insertion(x: HammerTool) -> bool:
 def add_fillers(x: HammerTool) -> bool:
     if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
        x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
+       	x.append("set_db add_fillers_with_drc false")
         x.add_fillers()  # call Innovus's add_fillers step
         # x.append("opt_design -post_route -setup -hold")
         # x.append("opt_design -post_route -hold")
@@ -133,6 +134,7 @@ def lvs_blackboxes(x: HammerTool) -> bool:
             for module in modules + IO_CELLS_TO_BLACKBOX_FOR_PEGASUS:
                 f.write(f"\nlvs_black_box {module} -gray")
             f.write('\n')
+            f.write('\nlvs_report_max -all\n')
     return True
 
 def donttouch_iocells(x: HammerTool) -> bool:
