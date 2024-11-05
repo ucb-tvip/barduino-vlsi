@@ -6,7 +6,7 @@ vlsi.core.max_threads: 12
 
 # Sky130 paths
 technology.sky130:
-  sram22_sky130_macros: "/scratch/ee198-20-tab/sram22_sky130_macros-sram22v2/"
+  sram22_sky130_macros: "/scratch/ee198-20-tab/sram22_sky130_macros/"
 
   sky130_cds:    "/home/ff/eecs151/fa24/pdk/sky130_release_0.0.4/"
   sky130_scl: "/home/ff/eecs151/fa24/pdk/sky130_scl_9T_0.0.5/"
