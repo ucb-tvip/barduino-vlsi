@@ -195,7 +195,12 @@ commit_power_intent -verbose
     ht.append(f'''
 # Core ring
 add_rings -follow io -layer met5 -nets {{ {p_nets[0]} {g_nets[0]} }} -offset 5 -width 13 -spacing 3
-#route_special -connect pad_pin -nets {{ {p_nets[0]} {g_nets[0]} }} -detailed_log
+# lord forgive me (for some reason -isnt doesn't take a list -elam
+foreach i [get_db [get_db insts -if {{.base_cell.name == "sky130_ef_io_*_clamped*_pad"}}] .base_name] {{
+     route_special -connect pad_pin -nets {{ {p_nets[0]} {g_nets[0]} }} -inst $i
+}}
+
+
 ''')
     ht.append('''
 # Prevent buffering on TIE_LO_ESD and TIE_HI_ESD
