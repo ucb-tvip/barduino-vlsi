@@ -53,12 +53,12 @@ vlsi.inputs:
       y: 855
       orientation: my90
       top_layer: met2
-    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
-      type: hardmacro
-      x: 400
-      y: 1862.946
-      orientation: my90
-      top_layer: met2
+    #- path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+      #type: hardmacro
+      #x: 400
+      #y: 1862.946
+      #orientation: my90
+      #top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
       type: hardmacro
       x: 400
