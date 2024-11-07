@@ -21,26 +21,6 @@ class WithPureIOClockSky130(freqMHz: Int = 100) extends OverrideLazyIOBinder({
     system.chiptopClockGroupsNode :*= clockGroupsAggregator.node := clockGroupsSourceNode
 
     InModuleBody {
-      val binderNodes = mutable.Buffer[Data]()
-      val binderCells = mutable.Buffer[IOCell]()
-
-      def addIOCell(data: (Data, Seq[IOCell])): Unit = {
-        binderNodes += data._1
-        binderCells ++= data._2
-      }
-
-      def generateIO(
-        coreSignal: Data,
-        name: String,
-        abstractResetAsAsync: Boolean = false
-      ): Unit =
-        addIOCell(IOCell.generateIOFromSignal(
-        coreSignal,
-        name,
-        p(IOCellKey),
-        abstractResetAsAsync = abstractResetAsAsync)
-      )
-
       val clock_wire = Wire(Input(Clock()))
       val reset_wire = Wire(Input(AsyncReset()))
       val (clock_io, clockIOCell) = IOCell.generateIOFromSignal(clock_wire, "clock", p(IOCellKey))
