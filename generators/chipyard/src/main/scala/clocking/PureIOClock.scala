@@ -21,15 +21,35 @@ class WithPureIOClockSky130(freqMHz: Int = 100) extends OverrideLazyIOBinder({
     system.chiptopClockGroupsNode :*= clockGroupsAggregator.node := clockGroupsSourceNode
 
     InModuleBody {
+      val binderNodes = mutable.Buffer[Data]()
+      val binderCells = mutable.Buffer[IOCell]()
+
+      def addIOCell(data: (Data, Seq[IOCell])): Unit = {
+        binderNodes += data._1
+        binderCells ++= data._2
+      }
+
+      def generateIO(
+        coreSignal: Data,
+        name: String,
+        abstractResetAsAsync: Boolean = false
+      ): Unit =
+        addIOCell(IOCell.generateIOFromSignal(
+        coreSignal,
+        name,
+        p(IOCellKey),
+        abstractResetAsAsync = abstractResetAsAsync)
+      )
+
       val clock_wire = Wire(Input(Clock()))
       val reset_wire = Wire(Input(AsyncReset()))
-      val (clock_io, clockIOCell) = IOCell.generateIOFromSignal(clock_wire, "clock", p(IOCellKey), abstractResetAsAsync = true )
-      val (reset_io, resetIOCell) = IOCell.generateIOFromSignal(reset_wire, "reset", p(IOCellKey), abstractResetAsAsync = true )
+      val (clock_io, clockIOCell) = IOCell.generateIOFromSignal(clock_wire, "clock", p(IOCellKey))
+      val (reset_io, resetIOCell) = IOCell.generateIOFromSignal(reset_wire, "reset", p(IOCellKey))
 
       clockGroupsSourceNode.out.foreach { case (bundle, edge) =>
         bundle.member.data.foreach { b =>
-          b.clock := clock_wire
-          b.reset := reset_wire
+          b.clock := clock_io
+          b.reset := reset_io
         }
       }
       (Seq(ClockPort(() => clock_io, freqMHz), ResetPort(() => reset_io)), clockIOCell ++ resetIOCell)

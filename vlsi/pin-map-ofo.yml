@@ -1,4 +1,3 @@
-# for now a copy of pin-map-stac.yml TODO remove stuff related to srams, we prob just want to keep serial tl and a clock
 pins:
   S2: reset
   S3: clock
@@ -16,34 +15,6 @@ pins:
   W16: serial_tl_0_in_ready
   W15: serial_tl_0_out_valid
   W14: serial_tl_0_out_ready
-  # E19: spi_0_sck
-  # E18: spi_0_cs_0
-  # E17: spi_0_dq_3
-  # E16: spi_0_dq_2
-  # E15: spi_0_dq_1
-  # E14: spi_0_dq_0
-  # W1: sram_bist_sramSaeClk
-  # W5: sram_bist_sramScanIn
-  # W6: sram_bist_sramScanOut
-  # W7: sram_bist_sramScanEn
-  # N1: sram_bist_bistStart
-  # N2: sram_bist_sramScanMode
-  # N3: sram_bist_sramEn
-  # N4: sram_bist_bistEn
-  # N5: sram_bist_sramExtEn
-  # W8: sram_bist_bistDone
-  # N7: pll_arstb
-  # N8: pll_scan_out
-  # E5: pll_div_out
-  # E1: pll_ref_in
-  # E3: pll_clk_out
-  # N9: pll_scan_in
-  # E6: pll_scan_clk
-  # E7: pll_scan_rst
-  # E8: pll_scan_en
-  # E9: pll_sel
-  #S9: clksel_0
-  #E10: clksel_1
 extra_insts:
   bottom:
     - name: IO_FILLER_MANUAL_S_1

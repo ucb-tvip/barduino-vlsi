@@ -67,7 +67,7 @@ class OFOTConfig extends Config( // toplevel
   new freechips.rocketchip.subsystem.WithNMemoryChannels(1) ++                          // 1 memory channel
 
   // single clock over IO
-  new chipyard.clocking.WithSingleClockBroadcastClockGenerator(freqMHz = 5) ++
+  new chipyard.clocking.WithPureIOClockSky130(freqMHz = 5) ++
 
   //==================================
   // Set up buses
