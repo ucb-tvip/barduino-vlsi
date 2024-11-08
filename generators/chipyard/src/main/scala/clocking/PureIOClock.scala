@@ -23,13 +23,13 @@ class WithPureIOClockSky130(freqMHz: Int = 100) extends OverrideLazyIOBinder({
     InModuleBody {
       val clock_wire = Wire(Input(Clock()))
       val reset_wire = Wire(Input(AsyncReset()))
-      val (clock_io, clockIOCell) = IOCell.generateIOFromSignal(clock_wire, "clock", p(IOCellKey))
-      val (reset_io, resetIOCell) = IOCell.generateIOFromSignal(reset_wire, "reset", p(IOCellKey))
+      val (clock_io, clockIOCell) = IOCell.generateIOFromSignal(clock_wire, "clock", p(IOCellKey), abstractResetAsAsync = true )
+      val (reset_io, resetIOCell) = IOCell.generateIOFromSignal(reset_wire, "reset", p(IOCellKey), abstractResetAsAsync = true )
 
       clockGroupsSourceNode.out.foreach { case (bundle, edge) =>
         bundle.member.data.foreach { b =>
-          b.clock := clock_io
-          b.reset := reset_io
+          b.clock := clock_wire
+          b.reset := reset_wire
         }
       }
       (Seq(ClockPort(() => clock_io, freqMHz), ResetPort(() => reset_io)), clockIOCell ++ resetIOCell)

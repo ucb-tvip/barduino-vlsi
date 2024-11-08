@@ -80,6 +80,13 @@ trait IOCell extends BaseModule {
     suggestName(s"iocell_$s")
   }
 
+  override def suggestName(s: => String): this.type = {
+        val sForced = s // evaluate pass-by-name argument *once*
+
+            iocellName = Some(sForced)
+                super.suggestName(sForced)
+                  }
+
 }
 
 trait AnalogIOCell extends IOCell {
@@ -190,6 +197,7 @@ case class GenericIOCellParams() extends IOCellTypeParams {
   def gpio() = Module(new GenericDigitalGPIOCell)
   def input() = Module(new GenericDigitalInIOCell)
   def output() = Module(new GenericDigitalOutIOCell)
+
 }
 
 object IOCell {
