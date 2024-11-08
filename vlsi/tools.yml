@@ -1,36 +1,21 @@
-# # Tool options
-
-# Generate Make include to aid in flow
 vlsi.core.build_system: make
 # Genus options
 vlsi.core.synthesis_tool: "hammer.synthesis.genus"
-synthesis.genus.genus_bin: "/share/instsww/cadence/DDI221/GENUS221/bin/genus"
+synthesis.genus.version: "211"
 # Innovus options
 vlsi.core.par_tool: "hammer.par.innovus"
+par.innovus.version: "211"
+par.innovus.design_flow_effort: "standard"
 par.inputs.gds_merge: true
-# Pegasus options
-vlsi.core.drc_tool: "hammer.drc.pegasus"
-drc.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
-vlsi.core.lvs_tool: "hammer.lvs.pegasus"
-lvs.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
+# Calibre options
+vlsi.core.drc_tool: "hammer.drc.calibre"
+drc.calibre.version: "2022.2_24.16"
+vlsi.core.lvs_tool: "hammer.lvs.calibre"
+lvs.calibre.version: "2022.2_24.16"
 # VCS options
 vlsi.core.sim_tool: "hammer.sim.vcs"
 sim.vcs.version: "S-2021.09-SP1-1"
-sim.vcs.vcs_home: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/"
-sim.vcs.vcs_bin: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/bin/vcs"
 # Voltus options
-vlsi.core.power_tool: "hammer.power.joules"
+vlsi.core.power_tool: "hammer.power.voltus"
 power.joules.version: "211"
-
-# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
-vlsi.inputs.power_spec_mode: "auto"
-vlsi.inputs.power_spec_type: "cpf"
-
-# gets overwritten if we leave it in tools for some reason
-par.innovus:
-  innovus_bin: "/share/instsww/cadence/DDI221/INNOVUS221/bin/innovus"
-  version: "221"
-  design_flow_effort: "standard"
-
-# SRAM Compiler compiler options
-vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
+power.voltus.version: "211_ISR3"
