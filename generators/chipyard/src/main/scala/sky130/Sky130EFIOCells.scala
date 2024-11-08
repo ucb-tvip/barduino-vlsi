@@ -260,7 +260,6 @@ class Sky130FDXRes4V2IOCell(cellName: String = consts.defaultXRes4V2CellName)
   val levelShifter = Module(new Sky130FDLevelShifter(Sky130FDLevelShifters.defaults.hv2lv))
   levelShifter.in := iocell.io.XRES_H_N
   io.reset := (!levelShifter.out).asAsyncReset
-  dontTouch(io.reset)
 }
 
 class Sky130EFAnalogCellIOCell(cellName: String)
@@ -296,7 +295,7 @@ case class Sky130EFIOCellTypeParams(
       val iocell = reset().named(name)
       iocell.io.pad := padSignal
       coreSignal := iocell.io.reset
-      dontTouch(coreSignal)
+      Seq(iocell)
   }
 }
 
