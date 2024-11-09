@@ -9,7 +9,7 @@ import sys
 import json
 
 import yaml
-from pydantic import BaseModel, RootModel
+from pydantic import BaseModel
 
 PinData = str
 
@@ -22,8 +22,8 @@ class IOMap(BaseModel):
 class DesignInfoInst(BaseModel):
     name: str
 
-class DesignInfo(RootModel):
-    root: list[DesignInfoInst]
+class DesignInfo(BaseModel):
+    __root__: list[DesignInfoInst]
 
 
 cell_locations: dict[str, int | float] = {
@@ -309,7 +309,7 @@ def generate_iofile(iomap: IOMap, design_info: DesignInfo | None) -> IOFileModel
         if has_dupe_insts:
             raise RuntimeError("Duplicate instances generated")
         logic_insts_set = {cast(str, e["name"]) for e in logic_insts}
-        design_insts_set = {get_inst_path_for_signal(e.name) for e in design_info.root}
+        design_insts_set = {get_inst_path_for_signal(e.name) for e in design_info.__root__}
         if logic_insts_set != design_insts_set:
             print(f"Insts in design but not pin-map: {design_insts_set - logic_insts_set}", file=sys.stderr)
             print(f"Insts in pin-map but not design: {logic_insts_set - design_insts_set}", file=sys.stderr)
