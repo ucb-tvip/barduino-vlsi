@@ -46,6 +46,13 @@ def chiptop_dont_touch(x: HammerTool) -> bool:
     x.append("set_dont_touch [get_nets {%s}] true" % " ".join(CHIPTOP_DONT_TOUCH_NETS))
     return True
 
+def add_ofo_srams(x: HammerTool) -> bool:
+    # this isn't added since sram compiler doesn't know about the 151 blackbox core srams
+    sram22_path = x.get_setting("technology.sky130.sram22_sky130_macros")
+    for sram_name in ["sram22_64x32m4w8",  "sram22_256x32m4w8"]:
+        x.technology.config.libraries.append(hammer_tech.Library(name="151 sram", lef_file=f"{sram22_path}/{sram_name}/{sram_name}.lef" ))
+    return True
+
 def assign_chiptop_io_pins(x: HammerTool) -> bool:
     x.append(f'''
         set_promoted_macro_pin -insts *iocell -pins {{ P_PAD PAD }}
@@ -470,7 +477,8 @@ def patch_hvl_ls_lef(ht: HammerTool) -> bool:
             elif 'SITE unithv' in line:
                 pass
             else:
-                df.write(line.replace("CLASS CORE", "CLASS BLOCK"))
+                df.write(line.replace("CLASS CORE", "CLASS BLOCK") if not (("ANTENNACELL" in line) or ("SPACER" in line)) else line)
+
     return True
 
 def load_hv_def_routing(x: HammerTool) -> bool:
@@ -520,6 +528,9 @@ class Driver(CLIDriver):
             HammerTool.make_pre_insertion_hook("syn_generic", chiptop_dont_touch),
 
             HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
+
+            # manually include the LEFs for the srams used by the 151 core since sram_compiler doesn't know about them
+            HammerTool.make_persistent_hook(add_ofo_srams),
         ]
 
     def get_extra_par_hooks(self) -> List[HammerToolHookAction]:
