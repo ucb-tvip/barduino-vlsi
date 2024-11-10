@@ -50,7 +50,15 @@ def add_ofo_srams(x: HammerTool) -> bool:
     # this isn't added since sram compiler doesn't know about the 151 blackbox core srams
     sram22_path = x.get_setting("technology.sky130.sram22_sky130_macros")
     for sram_name in ["sram22_64x32m4w8",  "sram22_256x32m4w8"]:
-        x.technology.config.libraries.append(hammer_tech.Library(name="151 sram", lef_file=f"{sram22_path}/{sram_name}/{sram_name}.lef" ))
+        corners = [["-40C","1.95","_ff_n40C_1v95.lib", "fast"] ,["100C","1.60","_ss_100C_1v60.lib", "slow"], ["025C","1.80","_tt_025C_1v80.lib", "typical"]]
+        for temp, vdd, postfix, speed in corners:
+            x.technology.config.libraries.append(
+                    hammer_tech.Library(name="151 sram", 
+                                        corner=hammer_tech.Corner(temperature=temp,nmos=speed, pmos=speed),
+                                        supplies=hammer_tech.Supplies(GND="0v", VDD=vdd),
+                                        nldm_liberty_file=f"{sram22_path}/{sram_name}/{sram_name}{postfix}",
+                                        lef_file=f"{sram22_path}/{sram_name}/{sram_name}.lef",
+                                        gds_file= f"{sram22_path}/{sram_name}/{sram_name}.gds"))
     return True
 
 def assign_chiptop_io_pins(x: HammerTool) -> bool:
@@ -517,6 +525,47 @@ set pll_route_blkgs [lminus [get_db route_blockages] $pll_route_blkgs_pre]
 ''')
     return True
 
+def ofo_manual_edits(x: HammerTool) -> bool: 
+    # remove floating met1 stripes
+    x.append("""
+set_layer_preference node_layer -is_visible 0
+set_layer_preference met1 -is_visible 1
+gui_select -point {3278.01900 251.96600}
+delete_selected_from_floorplan 
+gui_select -point {3278.01700 254.74400}
+delete_selected_from_floorplan 
+gui_select -point {3278.12200 257.49400}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 260.13800}
+delete_selected_from_floorplan 
+gui_select -point {3278.65100 262.99300}
+delete_selected_from_floorplan 
+gui_select -point {3278.33400 265.42500}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 265.74200}
+delete_selected_from_floorplan 
+gui_select -point {3278.22800 268.28000}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 271.13500}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 273.88500}
+delete_selected_from_floorplan 
+gui_select -point {3278.54500 276.52800}
+delete_selected_from_floorplan 
+gui_select -point {3278.54500 279.06600}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 282.13300}
+delete_selected_from_floorplan 
+gui_select -point {3278.33400 284.56500}
+delete_selected_from_floorplan 
+gui_select -point {3278.44000 287.52600}
+delete_selected_from_floorplan 
+gui_select -point {3278.33400 290.27500}
+delete_selected_from_floorplan 
+    """)
+    return True
+
+
 class Driver(CLIDriver):
     def get_extra_synthesis_hooks(self) -> List[HammerToolHookAction]:
         return [
@@ -535,6 +584,7 @@ class Driver(CLIDriver):
 
     def get_extra_par_hooks(self) -> List[HammerToolHookAction]:
         return [
+            HammerTool.make_persistent_hook(add_ofo_srams),
             HammerTool.make_removal_hook("place_bumps"),
             HammerTool.make_post_insertion_hook("place_pins", assign_chiptop_io_pins),
             HammerTool.make_removal_hook("place_pins"),
@@ -565,6 +615,7 @@ class Driver(CLIDriver):
 
             HammerTool.make_pre_insertion_hook("write_design", force_bias_pins_nets),
             HammerTool.make_pre_insertion_hook("write_design", draw_areaidld),
+            HammerTool.make_pre_insertion_hook("write_design", ofo_manual_edits),
             HammerTool.make_post_insertion_hook("write_design", write_chiptop_netlist_with_pg_pins),
             HammerTool.make_post_insertion_hook("write_design", write_chiptop_drc_lvs_layout),
 
