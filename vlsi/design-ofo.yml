@@ -83,23 +83,89 @@ vlsi.inputs:
       y: 855
       orientation: my90
       top_layer: met2
-    #- path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
-      #type: hardmacro
-      #x: 400
-      #y: 1862.946
-      #orientation: my90
-      #top_layer: met2
+    - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+      type: hardmacro
+      x: 500
+      y: 2151
+      orientation: my90
+      top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
       type: hardmacro
-      x: 400
-      y: 2828.96
+      x: 500
+      y: 3076
       orientation: my90
       top_layer: met2
     - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_tag_array_0/rockettile_icache_tag_array_0_ext/mem_0_0"
       type: hardmacro 
       x: 1250
-      y: 2858.155
+      y: 3076
       orientation: my90
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram0"
+      type: hardmacro
+      x: 1812.51
+      y: 2357.62
+      orientation: my90
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/meta_sram"
+      type: hardmacro
+      x: 2457.535
+      y: 3070.31
+      orientation: my90
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/meta_sram"
+      type: hardmacro
+      x: 1935.21
+      y: 3070.31
+      orientation: my90
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram1"
+      type: hardmacro
+      x: 1812.51
+      y: 1794.895
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram2"
+      type: hardmacro
+      x: 1812.51
+      y: 1222.47
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram3"
+      type: hardmacro
+      x: 1812.51
+      y: 659.745
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram0"
+      type: hardmacro
+      x: 2457.535
+      y: 2357.62
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram1"
+      type: hardmacro
+      x: 2457.535
+      y: 1794.895
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram2"
+      type: hardmacro
+      x: 2457.535
+      y: 1222.47
+      orientation: my90
+
+
+    - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram3"
+      type: hardmacro
+      x: 2457.535
+      y: 659.745
+      orientation: my90
+
 
 # for the por
     - path: ChipTop/system
