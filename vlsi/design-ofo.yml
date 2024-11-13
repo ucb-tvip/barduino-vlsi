@@ -105,66 +105,66 @@ vlsi.inputs:
       type: hardmacro
       x: 1812.51
       y: 2357.62
-      orientation: my90
+      orientation: r270
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/meta_sram"
       type: hardmacro
       x: 2457.535
-      y: 3070.31
-      orientation: my90
+      y: 3170.31
+      orientation: r270
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/meta_sram"
       type: hardmacro
       x: 1935.21
       y: 3070.31
-      orientation: my90
+      orientation: r270
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram1"
       type: hardmacro
       x: 1812.51
       y: 1794.895
-      orientation: my90
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram2"
       type: hardmacro
       x: 1812.51
       y: 1222.47
-      orientation: my90
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram3"
       type: hardmacro
       x: 1812.51
       y: 659.745
-      orientation: my90
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram0"
       type: hardmacro
       x: 2457.535
-      y: 2357.62
-      orientation: my90
+      y: 2457.62
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram1"
       type: hardmacro
       x: 2457.535
-      y: 1794.895
-      orientation: my90
+      y: 1894.895
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram2"
       type: hardmacro
       x: 2457.535
-      y: 1222.47
-      orientation: my90
+      y: 1322.47
+      orientation: r270
 
 
     - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram3"
       type: hardmacro
       x: 2457.535
-      y: 659.745
-      orientation: my90
+      y: 759.745
+      orientation: r270
 
 
 # for the por
@@ -273,16 +273,10 @@ vlsi.technology.extra_libraries:
       gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io_with_overlay.gds
       lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
       spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
-      provides:
-        - lib_type: sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um
-          vt: RVT
   - library:
-      gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um.gds
-      lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
+      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.gds
+      lef_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.lef
       spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
-      provides:
-        - lib_type: sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um
-          vt: RVT
   - library:
       gds_file: /tools/C/sehuang/sky130/ucb_chip_io/gds/sky130_ef_io__analog_pad_esd2.gds
       lef_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io__analog_pad_esd2.lef

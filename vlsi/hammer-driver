@@ -31,8 +31,7 @@ CHIPTOP_IO_NETS = [
     "VDDIO",
     "VDD",
     "VDDA",
-    "VSS",
-    "VSSA"
+    "VSS"
 ]
 
 CHIPTOP_DONT_TOUCH_NETS = ["_commonIO_AMUXBUS_A_wire", "_commonIO_AMUXBUS_B_wire"]
@@ -112,7 +111,8 @@ def write_chiptop_drc_lvs_layout(x: HammerTool) -> bool:
     return True
 
 def write_chiptop_netlist_with_pg_pins(x: HammerTool) -> bool:
-    x.append(f"write_netlist {x.output_netlist_filename} -top_module_first -top_module ChipTop -exclude_leaf_cells -phys -flat -exclude_insts_of_cells {{ sky130_fd_sc_hd__tap_1 sky130_fd_sc_hd__tap_2 sky130_fd_sc_hd__tapvgnd_1 sky130_fd_sc_hd__tapvpwrvgnd_1 sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8 sky130_fd_sc_hd__diode_2 sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um sky130_ef_io__com_bus_slice_20um sky130_ef_io__corner_pad}}")
+    x.append(f"write_netlist {x.output_netlist_filename} -top_module_first -top_module ChipTop -exclude_leaf_cells -phys -flat -exclude_insts_of_cells {{ sky130_fd_sc_hd__tap_1 sky130_fd_sc_hd__tap_2 sky130_fd_sc_hd__tapvgnd_1 sky130_fd_sc_hd__tapvpwrvgnd_1 sky130_fd_sc_hd__fill_1 sky130_fd_sc_hd__fill_2 sky130_fd_sc_hd__fill_4 sky130_fd_sc_hd__fill_8 sky130_fd_sc_hd__diode_2 sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um sky130_ef_io__com_bus_slice_20um sky130_ef_io__corner_pad sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um }}")
+
     return True
 
 def draw_areaidld(x: HammerTool) -> bool:
@@ -419,10 +419,11 @@ def efabless_ring_io(ht: HammerTool) -> bool:
     g_nets = list(map(lambda s: s.name, ht.get_independent_ground_nets()))
     # TODO: put only a few supply tie cells instead of replacing all 20um?
     ht.append('''
+
 # IO fillers
 #set io_fillers {sky130_ef_io__com_bus_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
-# Use slices connecting VCCHIB<>VCCD and VSWITCH<>VDDA
-set io_fillers {sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
+# Use slices connecting VCCHIB<>VCCD and VSWITCH<>VDDA and VSSIO<>VSSA<>VSSD
+set io_fillers {sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um sky130_ef_io__com_bus_slice_10um sky130_ef_io__com_bus_slice_5um sky130_ef_io__com_bus_slice_1um}
 add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side top -filler_orient r0
 add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side right -filler_orient r270
 add_io_fillers -prefix IO_FILLER -io_ring 1 -cells $io_fillers -side bottom -filler_orient r180
