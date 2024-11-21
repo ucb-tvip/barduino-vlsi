@@ -24,7 +24,7 @@ popd
 SOC1_BIN=$PWD/tests/${DRIVER_BIN}.riscv
 SOC2_BIN=${1:-$PWD/tests/${OFO_BIN}.ofo.riscv}
 
-CFG=OFORocketConfig
+CFG=OFOTConfig
 out_name=$(basename $SOC2_BIN)
 
 pushd sims/vcs
