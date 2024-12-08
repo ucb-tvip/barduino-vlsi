@@ -79,7 +79,7 @@ class OFOTConfig extends Config( // toplevel
 
 
   // set up io ring
- new chipyard.sky130.WithSky130EFIOCells(sim = true) ++
+ new chipyard.sky130.WithSky130EFIOCells(sim = false) ++
  new chipyard.sky130.WithSky130EFIOTotalCells(46) ++
  new chipyard.sky130.WithSky130ChipTop ++
  new freechips.rocketchip.subsystem.WithCoherentBusTopology ++

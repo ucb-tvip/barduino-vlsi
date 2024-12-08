@@ -157,3 +157,6 @@
 [submodule "generators/ofo"]
 	path = generators/ofo
 	url = git@github.com:elamdf/ofo-generator.git
+[submodule "vlsi/hammer"]
+	path = vlsi/hammer
+	url = git@github.com:rahulk29/hammer.git
