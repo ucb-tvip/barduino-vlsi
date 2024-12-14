@@ -205,6 +205,8 @@ vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.extra_libraries:
   - library:
       spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/devices.sp
+  - library: # TODO: why is this required? seems like it isn't used in stacv2 repo
+      spice_file: ${technology.sky130.sram22_sky130_macros}/sram22.spice
   - library:
       spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
   - library:
