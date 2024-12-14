@@ -15,5 +15,7 @@ technology.sky130:
   # for caravel collateral pulled in by this design
   caravel: /tools/commercial/skywater/local/caravel/v6.0
 
+  lvs_blackbox_srams: true
+
 # SRAM Compiler compiler options
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
