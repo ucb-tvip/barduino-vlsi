@@ -301,6 +301,7 @@ def set_routing_layers(x: HammerTool) -> bool:
     if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
        x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
         x.append("""
+                 # note this is required for sky130_fd_sc_hd, the design has a ton of drcs if bottom layer is 1
 set_db design_bottom_routing_layer 2
 set_db design_top_routing_layer 6
 # deprected syntax, but this used to always work
@@ -588,6 +589,7 @@ class Driver(CLIDriver):
             HammerTool.make_persistent_hook(add_ofo_srams),
             HammerTool.make_removal_hook("place_bumps"),
             HammerTool.make_post_insertion_hook("place_pins", assign_chiptop_io_pins),
+            HammerTool.make_pre_insertion_hook("place_pins", connect_core_stripes),
             HammerTool.make_removal_hook("place_pins"),
 
             HammerTool.make_pre_insertion_hook("place_opt_design", derate_srams),
@@ -612,11 +614,10 @@ class Driver(CLIDriver):
             #HammerTool.make_post_insertion_hook("floorplan_design", floorplan_sram_macros),
             HammerTool.make_post_insertion_hook("efabless_ring_io", load_hv_def_routing),
             #HammerTool.make_pre_insertion_hook("power_straps", pll_power),
-            HammerTool.make_post_insertion_hook("power_straps", connect_core_stripes),
 
             HammerTool.make_pre_insertion_hook("write_design", force_bias_pins_nets),
             HammerTool.make_pre_insertion_hook("write_design", draw_areaidld),
-            HammerTool.make_pre_insertion_hook("write_design", ofo_manual_edits),
+            #HammerTool.make_pre_insertion_hook("write_design", ofo_manual_edits),
             HammerTool.make_post_insertion_hook("write_design", write_chiptop_netlist_with_pg_pins),
             HammerTool.make_post_insertion_hook("write_design", write_chiptop_drc_lvs_layout),
 

@@ -201,6 +201,11 @@ design.def.hv_routing: ofo-hv-routing.def
     - lib_type: block
       vt: RVT
 
+vlsi.technology.manually_override_pdk_collateral: true
+vlsi.technology.override_libraries_meta: ["append", "lazydeepsubst"]
+vlsi.technology.override_libraries:
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
 vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.extra_libraries:
   - library:
