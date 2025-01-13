@@ -206,16 +206,26 @@ vlsi.technology.override_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.override_libraries:
   - library:
       spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
+  - library:
+      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io_with_overlay.gds
+      lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+  #- library:
+      #spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/sky130_fd_sc_hd.cdl
 vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.extra_libraries:
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL16.gds
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL4.gds
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL1.gds
   - library:
       spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/devices.sp
   - library: # TODO: why is this required? seems like it isn't used in stacv2 repo
       spice_file: ${technology.sky130.sram22_sky130_macros}/sram22.spice
   - library:
       spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
-  - library:
-      spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/sky130_fd_sc_hd.cdl
   - library:
       <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
       nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ss_100C_1v65_lv1v60.lib

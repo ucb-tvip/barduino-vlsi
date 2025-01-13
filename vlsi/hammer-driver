@@ -297,17 +297,6 @@ def dont_touch(x: HammerTool) -> bool:
     x.append('set_dont_touch [get_db insts -if {.base_cell.base_class == block}]')
     return True
 
-def set_routing_layers(x: HammerTool) -> bool:
-    if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
-       x.get_setting("vlsi.core.par_tool")   == "hammer.par.innovus" :
-        x.append("""
-                 # note this is required for sky130_fd_sc_hd, the design has a ton of drcs if bottom layer is 1
-set_db design_bottom_routing_layer 2
-set_db design_top_routing_layer 6
-# deprected syntax, but this used to always work
-set_db route_design_bottom_routing_layer 2
-        """)
-    return True      
 
 def derate_srams(x: HammerTool) -> bool:
     if x.get_setting("vlsi.core.technology") == "hammer.technology.sky130" and \
@@ -593,8 +582,6 @@ class Driver(CLIDriver):
             HammerTool.make_removal_hook("place_pins"),
 
             HammerTool.make_pre_insertion_hook("place_opt_design", derate_srams),
-
-            HammerTool.make_post_insertion_hook("init_design", set_routing_layers),
 
             # move fillers step to after opt_design
             HammerTool.make_removal_hook("add_fillers"),
