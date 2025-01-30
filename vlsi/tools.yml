@@ -2,12 +2,16 @@ vlsi.core.build_system: make
 # Genus options
 vlsi.core.synthesis_tool: "hammer.synthesis.genus"
 synthesis.genus.version: "211"
-synthesis.genus.genus_bin: "/tools/cadence/GENUS/GENUS211/bin/genus"
+synthesis.genus.genus_bin: "/share/instsww/cadence/GENUS211/bin/genus"
+# bwrc
+# synthesis.genus.genus_bin: "/tools/cadence/GENUS/GENUS211/bin/genus"
 
 # Innovus options
 vlsi.core.par_tool: "hammer.par.innovus"
 par.innovus.version: "211"
-par.innovus.innovus_bin: "/tools/cadence/INNOVUS/INNOVUS211/bin/innovus"
+par.innovus.innovus_bin: "/share/instsww/cadence/INNOVUS211/bin/innovus"
+# bwrc
+# par.innovus.innovus_bin: "/tools/cadence/INNOVUS/INNOVUS211/bin/innovus"
 par.innovus.design_flow_effort: "standard"
 par.inputs.gds_merge: true
 # Calibre options

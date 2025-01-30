@@ -57,3 +57,6 @@ vlsi.inputs.placement_constraints:
     x: 50
     y: 2100
     orientation: r90
+# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
+vlsi.inputs.power_spec_mode: "auto"
+vlsi.inputs.power_spec_type: "cpf"

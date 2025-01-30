@@ -28,6 +28,8 @@ SMEMS_COMP         ?= $(tech_dir)/sram-compiler.json
 SMEMS_CACHE        ?= $(tech_dir)/sram-cache.json
 SMEMS_HAMMER       ?= $(build_dir)/$(long_name).mems.hammer.json
 
+IS_TOP_RUN ?= 1
+
 ifdef USE_SRAM_COMPILER
 	TOP_MACROCOMPILER_MODE ?= -l $(SMEMS_COMP) --use-compiler -hir $(SMEMS_HAMMER) --mode strict
 else
@@ -40,10 +42,15 @@ TOOLS_CONF         ?= tools.yml
 CHIP_CONF         ?= design-ofo.yml
 INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF) $(CHIP_CONF)
 PIN_MAP            ?= pin-map-ofo.yml
-HAMMER_EXEC        ?= ./hammer-driver 
+ifeq ($(IS_TOP_RUN),1)
+	HAMMER_EXEC        ?= ./hammer-driver 
+else
+	HAMMER_EXEC        ?= ./example-vlsi-sky130
+endif
+
 # $(if $(filter $(tech_name),sky130),\
-                        # ./example-vlsi-sky130,\
-                        # ./example-vlsi)
+	# ./example-vlsi-sky130,\
+	# ./example-vlsi)
 VLSI_TOP           ?= $(TOP)
 VLSI_MODEL_DUT_NAME ?= chiptop0
 # If overriding, this should be relative to $(vlsi_dir)
@@ -118,7 +125,13 @@ $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
 # synthesis input configuration
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
-GENERATED_CONFS = $(SYN_CONF) $(IO_FILE_CONF)
+GENERATED_CONFS = $(SYN_CONF) 
+
+ifeq ($(IS_TOP_RUN),1)
+	# only use ios if non commercial
+	GENERATED_CONFS = $(SYN_CONF) $(IO_FILE_CONF)
+endif
+
 ifeq ($(CUSTOM_VLOG), )
 	GENERATED_CONFS += $(SRAM_CONF)
 endif
@@ -129,14 +142,14 @@ $(SYN_CONF): $(VLSI_RTL)
 	echo "  input_files:" >> $@
 	for x in $$(cat $(VLSI_RTL)); do \
 		echo '    - "'$$x'"' >> $@; \
-	done
+		done
 	echo "  input_files_meta: 'append'" >> $@
 	echo "synthesis.inputs:" >> $@
 	echo "  top_module: $(VLSI_TOP)" >> $@
 	echo "  input_files:" >> $@
 	for x in $$(cat $(VLSI_RTL)); do \
 		echo '    - "'$$x'"' >> $@; \
-	done
+		done
 
 #########################################################################################
 # simulation and power input configuration
@@ -144,7 +157,7 @@ $(SYN_CONF): $(VLSI_RTL)
 include $(base_dir)/sims/vcs/vcs.mk
 
 SIM_FILE_REQS += \
-	$(ROCKETCHIP_RSRCS_DIR)/vsrc/TestDriver.v
+		 $(ROCKETCHIP_RSRCS_DIR)/vsrc/TestDriver.v
 
 # copy files but ignore *.h files in *.f since vcs has +incdir+$(build_dir)
 $(sim_files): $(SIM_FILE_REQS) $(ALL_MODS_FILELIST) | $(build_dir)
@@ -152,8 +165,8 @@ $(sim_files): $(SIM_FILE_REQS) $(ALL_MODS_FILELIST) | $(build_dir)
 	$(foreach file,\
 		$(SIM_FILE_REQS),\
 		$(if $(filter %.h,$(file)),\
-			,\
-			echo "$(addprefix $(build_dir)/, $(notdir $(file)))" >> $@;))
+		,\
+		echo "$(addprefix $(build_dir)/, $(notdir $(file)))" >> $@;))
 
 include $(vlsi_dir)/sim.mk
 
@@ -179,10 +192,10 @@ $(IO_FILE_CONF): $(IO_FILE)
 
 .PHONY: buildfile
 buildfile: $(OBJ_DIR)/hammer.d
-# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
-# TODO: make this dependency smarter so that we don't need this at all
-HAMMER_D_DEPS ?= $(GENERATED_CONFS)
-$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
+	# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
+	# TODO: make this dependency smarter so that we don't need this at all
+	HAMMER_D_DEPS ?= $(GENERATED_CONFS)
+	$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
 	$(HAMMER_EXEC) -e $(ENV_YML) $(foreach x,$(INPUT_CONFS) $(GENERATED_CONFS), -p $(x)) --obj_dir $(OBJ_DIR) build
 
 -include $(OBJ_DIR)/hammer.d
