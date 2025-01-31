@@ -36,6 +36,19 @@ set_db route_design_bottom_routing_layer 2
 set_db route_design_top_routing_layer 5
 ''')
     return True
+def place_concurrent_macros(x: HammerTool) -> bool:
+    x.append("""
+# "A [placement] halo is an area that prevents the placement of blocks and standard cells within the specified halo distance, measured from the edges of a hard macro to reduce congestion."
+create_place_halo -halo_deltas {10 10 10 10} -all_blocks
+# try to get innovus to place macros. This is a highly unconstrained optimization problem and innovus will struggle when the problem dimensions become nontrivial 
+place_design -concurrent_macros
+# legalize (snap to grid, etc.) macro placements
+place_macro_detail
+# still place the non-macro cells
+place_opt_design 
+             """)
+    return True
+    
 
 class ExampleDriver(CLIDriver):
     def get_extra_par_hooks(self) -> List[HammerToolHookAction]:
@@ -54,6 +67,7 @@ class ExampleDriver(CLIDriver):
 
             # make_removal_hook will remove the specified step from the flow
             HammerTool.make_removal_hook("place_bumps"),
+            HammerTool.make_replacement_hook("place_opt_design", place_concurrent_macros),
             #            HammerTool.make_pre_insertion_hook("")
 
             # The target step in any of the above calls may be a default step or another one of your custom hooks
