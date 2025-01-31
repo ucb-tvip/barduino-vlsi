@@ -18,11 +18,11 @@ technology.sky130:
   lvs_blackbox_srams: true
   sky130_scl: "/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.0.6"
   sky130_cds: "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.4/"
-  #stdcell_library: "sky130_scl"
-  stdcell_library: "sky130_fd_sc_hd"
+  stdcell_library: "sky130_scl"
+  #stdcell_library: "sky130_fd_sc_hd"
   
-#technology.core.stackup: "sky130_scl"
-#vlsi.technology.placement_site: "CoreSite"
+technology.core.stackup: "sky130_scl"
+vlsi.technology.placement_site: "CoreSite"
 
 # SRAM Compiler compiler options
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
