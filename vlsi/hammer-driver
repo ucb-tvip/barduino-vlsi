@@ -618,11 +618,13 @@ class Driver(CLIDriver):
         ]
     
     def get_extra_drc_hooks(self) -> List[HammerToolHookAction]:
+        return [] # these are calibre specific hooks and will break pegasus
         return [
             HammerTool.make_pre_insertion_hook("generate_drc_run_file", use_drc_lvs_gds),
             HammerTool.make_post_insertion_hook("generate_drc_run_file", drc_blackboxes)
         ]
     def get_extra_lvs_hooks(self) -> List[HammerToolHookAction]:
+        return [] # these are calibre specific hooks and will break pegasus
         return [
             HammerTool.make_pre_insertion_hook("generate_lvs_run_file", use_drc_lvs_gds),
             HammerTool.make_post_insertion_hook("generate_lvs_run_file", lvs_blackboxes)

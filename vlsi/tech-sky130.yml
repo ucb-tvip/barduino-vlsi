@@ -4,25 +4,25 @@ vlsi.core.max_threads: 32
 
 # Technology paths
 technology.sky130:
-  sky130A: "/tools/commercial/skywater/local/open_pdks-2022.10/share/pdk/sky130A"
+  sky130A: "/home/ff/ee198/ee198-20/sky130_col/open_pdks-2022.10/share/pdk/sky130A"
   # sram22_sky130_macros: "/tools/commercial/skywater/local/chipyard-tutorial/sram22_sky130_macros"
-  sram22_sky130_macros: "/tools/C/rohankumar/stac-top/vlsi/sram22_sky130_macros/"
+  sram22_sky130_macros: "/home/ff/ee198/ee198-20/sky130_col/sram22_sky130_macros/"
   # https://github.com/rahulk29/sram22_sky130_macros/tree/dev
 
   # this key is OPTIONAL, no NDA files will be used if it does not point to a valid path
-  sky130_nda: "/tools/commercial/skywater/swtech130/skywater-src-nda"
+  # sky130_nda: "/tools/commercial/skywater/swtech130/skywater-src-nda"
 
   # for caravel collateral pulled in by this design
-  caravel: /tools/commercial/skywater/local/caravel/v6.0
+  caravel: /home/ff/ee198/ee198-20/sky130_col/caravel/v6.0
 
   lvs_blackbox_srams: true
-  sky130_scl: "/tools/C/elamdf/sky130/sky130_scl_9T_0.0.6"
-  sky130_cds: "/tools/C/elamdf/sky130/sky130_release_0.0.4/"
-  #stdcell_library: "sky130_scl"
-  stdcell_library: "sky130_fd_sc_hd"
+  sky130_scl: "/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.0.6"
+  sky130_cds: "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.4/"
+  stdcell_library: "sky130_scl"
+  #stdcell_library: "sky130_fd_sc_hd"
   
-#technology.core.stackup: "sky130_scl"
-#vlsi.technology.placement_site: "CoreSite"
+technology.core.stackup: "sky130_scl"
+vlsi.technology.placement_site: "CoreSite"
 
 # SRAM Compiler compiler options
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
