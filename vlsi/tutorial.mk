@@ -26,6 +26,7 @@ ifeq ($(tutorial),sky130-commercial)
                             example-designs/sky130-rocket.yml, )
     VLSI_OBJ_DIR      ?= build-sky130-commercial
     INPUT_CONFS       ?= $(TOOLS_CONF) $(TECH_CONF) $(DESIGN_CONFS) $(EXTRA_CONFS)
+	IS_TOP_RUN = 0
 endif
 
 ifeq ($(tutorial),sky130-openroad)
