@@ -1,0 +1,157 @@
+vlsi.core.technology: "hammer.technology.sky130"
+
+vlsi.core.max_threads: 32
+
+# Technology paths
+technology.sky130:
+  sky130A: "/tools/commercial/skywater/local/open_pdks-2022.10/share/pdk/sky130A"
+  # sram22_sky130_macros: "/tools/commercial/skywater/local/chipyard-tutorial/sram22_sky130_macros"
+  sram22_sky130_macros: "/tools/C/rohankumar/stac-top/vlsi/sram22_sky130_macros/"
+  # https://github.com/rahulk29/sram22_sky130_macros/tree/dev
+
+  # this key is OPTIONAL, no NDA files will be used if it does not point to a valid path
+  sky130_nda: "/tools/commercial/skywater/swtech130/skywater-src-nda"
+
+  # for caravel collateral pulled in by this design
+  caravel: /tools/commercial/skywater/local/caravel/v6.0
+
+  lvs_blackbox_srams: true
+  sky130_scl: "/tools/C/elamdf/sky130/sky130_scl_9T_0.0.6"
+  sky130_cds: "/tools/C/elamdf/sky130/sky130_release_0.0.4/"
+# START sky130_scl settings
+  #stdcell_library: "sky130_scl"
+  stdcell_library: "sky130_fd_sc_hd"
+  
+# technology.core.stackup: "sky130_scl"
+# vlsi.technology.placement_site: "CoreSite"
+
+# END sky130_scl settings
+
+
+par.power_straps_mode: generate # Power Straps
+par.generate_power_straps_method: by_tracks
+par.blockage_spacing: 2.0
+par.blockage_spacing_top_layer: met4
+par.generate_power_straps_options:
+  by_tracks:
+    #generate_rail_layer: false # sky130_scl has a hook for rails
+    strap_layers:
+      - met4
+      - met5
+    pin_layers:
+      - met5
+    blockage_spacing_met2: 4.0
+    track_width: 6
+    track_width_met5: 2
+    track_spacing: 1
+    track_start: 10
+    track_start_met5: 1
+    power_utilization: 0.1
+    power_utilization_met2: 0.05
+    power_utilization_met4: 0.15
+    power_utilization_met5: 0.5
+
+# SRAM Compiler compiler options
+vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
+
+
+# Library stuff
+.local.library.sky130_fd_sc_hvl__lsbufhv2lv: &lib__sky130_fd_sc_hvl__lsbufhv2lv
+  # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
+  gds_file: /tools/commercial/skywater/skywater-pdk/libraries/sky130_fd_sc_hvl/latest/cells/lsbufhv2lv/sky130_fd_sc_hvl__lsbufhv2lv_1.gds
+  lef_file: cache/fd_sc_hvl__lef/sky130_fd_sc_hvl__lsbufhv2lv_1.lef
+  spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_sc_hvl.cdl
+  # spice_file: /tools/C/nayiri/sky130/chipyard-jun23_tapeout/vlsi/sky130_fd_sc_hvl.cdl
+  verilog_sim: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl__lsbufhv2lv.functional.v
+  provides:
+    - lib_type: lvlshift
+      vt: RVT
+.local.library.MultiPLLTop: &lib__MultiPLLTop
+  # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
+  gds_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/gds/MutliPLLTop_clean_6_2_0156.gds
+  lef_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lef/MultiPLLTop.lef
+  spice_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/spice/MultiPLLTop.lvs.sp
+  # TODO: verilog sim
+  provides:
+    - lib_type: block
+      vt: RVT
+
+vlsi.technology.manually_override_pdk_collateral: true
+vlsi.technology.override_libraries_meta: ["append", "lazydeepsubst"]
+vlsi.technology.override_libraries:
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
+  - library:
+      gds_file: ["/tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io_with_overlay.gds", "sky130_ef_io.gds"]
+      # this is hacked in sky130/__init__.py
+      #lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/sky130_fd_sc_hd.cdl
+vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
+vlsi.technology.extra_libraries:
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL16.gds
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL4.gds
+  - library:
+      gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL1.gds
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/stac2/lvs/devices.sp
+  - library: # TODO: why is this required? seems like it isn't used in stacv2 repo
+      spice_file: ${technology.sky130.sram22_sky130_macros}/sram22.spice
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_fd_io.spice
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ss_100C_1v65_lv1v60.lib
+      corner:
+        nmos: "slow"
+        pmos: "slow"
+        temperature: "100 C"
+      supplies:
+        VDD: "1.60 V"
+        GND: "0 V"
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ff_n40C_5v50_lv1v95_ccsnoise.lib
+      corner:
+        nmos: "fast"
+        pmos: "fast"
+        temperature: "-40 C"
+      supplies:
+        VDD: "1.95 V"
+        GND: "0 V"
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__tt_025C_3v30_lv1v80.lib
+      corner:
+        nmos: "typical"
+        pmos: "typical"
+        temperature: "025 C"
+      supplies:
+        VDD: "1.80 V"
+        GND: "0 V"
+  - library:
+      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.gds
+      lef_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.lef
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+  - library:
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io__analog_pad_esd2.cdl
+      gds_file: /tools/C/rohankumar/sky130/stac_tapeout/gds/sky130_ef_io__analog_pad_esd2.gds
+      lef_file: /tools/C/rohankumar/sky130/stac_tapeout/sky130_ef_io__analog_pad_esd2.lef
+      provides:
+        - lib_type: iocell
+  - library:
+      gds_file: ${technology.sky130.caravel}/gds/simple_por.gds
+      lef_file: ${technology.sky130.caravel}/lef/simple_por.lef
+      spice_file: /tools/C/rahulkumar/sky130/io_lvs/sky130_ef_io.spice
+      verilog_sim: ${technology.sky130.caravel}/verilog/rtl/simple_por.v
+      provides:
+        - lib_type: por
+          vt: RVT
+
+vlsi.inputs.dont_use_mode: append
+vlsi.inputs.dont_use_list_meta: append
+vlsi.inputs.dont_use_list:
+  - sky130_fd_sc_hvl__*

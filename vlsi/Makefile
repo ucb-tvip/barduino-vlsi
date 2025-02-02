@@ -36,12 +36,22 @@ else
 	TOP_MACROCOMPILER_MODE ?= -l $(SMEMS_CACHE) -hir $(SMEMS_HAMMER) --mode strict
 endif
 
+HOSTNAME := $(shell hostname)
+
+# tech and tool paths will change, so use different configs- bwrc and inst[ructional] are common environments
+ifeq ($(findstring bwrc, $(HOSTNAME)),bwrc)
+	PLATFORM  ?= -bwrc
+else ifeq ($(findstring eda, $(HOSTNAME)),eda)
+	PLATFORM  ?= -inst
+endif
+
 ENV_YML            ?= $(vlsi_dir)/env.yml
-TECH_CONF          ?= tech-$(tech_name).yml
-TOOLS_CONF         ?= tools.yml
+TECH_CONF          ?= tech-$(tech_name)$(PLATFORM).yml
+TOOLS_CONF         ?= tools$(PLATFORM).yml
 CHIP_CONF         ?= design-ofo.yml
 INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF) $(CHIP_CONF)
 PIN_MAP            ?= pin-map-ofo.yml
+
 ifeq ($(IS_TOP_RUN),1)
 	HAMMER_EXEC        ?= ./hammer-driver 
 else
@@ -125,6 +135,7 @@ $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
 # synthesis input configuration
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
+
 GENERATED_CONFS = $(SYN_CONF) 
 
 ifeq ($(IS_TOP_RUN),1)
@@ -192,10 +203,11 @@ $(IO_FILE_CONF): $(IO_FILE)
 
 .PHONY: buildfile
 buildfile: $(OBJ_DIR)/hammer.d
-	# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
-	# TODO: make this dependency smarter so that we don't need this at all
-	HAMMER_D_DEPS ?= $(GENERATED_CONFS)
-	$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
+# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
+# TODO: make this dependency smarter so that we don't need this at all
+HAMMER_D_DEPS ?= $(GENERATED_CONFS)
+
+$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
 	$(HAMMER_EXEC) -e $(ENV_YML) $(foreach x,$(INPUT_CONFS) $(GENERATED_CONFS), -p $(x)) --obj_dir $(OBJ_DIR) build
 
 -include $(OBJ_DIR)/hammer.d
