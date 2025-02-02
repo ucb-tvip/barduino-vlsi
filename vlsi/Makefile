@@ -36,12 +36,24 @@ else
 	TOP_MACROCOMPILER_MODE ?= -l $(SMEMS_CACHE) -hir $(SMEMS_HAMMER) --mode strict
 endif
 
+HOSTNAME := $(shell hostname)
+
+# tech and tool paths will change, so use different configs- bwrc, inst, or default (blank)
+PLATFORM := "AA"
+
+ifeq ($(findstring bwrc, $(HOSTNAME)),bwrc)
+	PLATFORM  := "-bwrc"
+else ifeq ($(findstring eda, $(HOSTNAME)),eda)
+	PLATFORM  := "-inst"
+endif
+
 ENV_YML            ?= $(vlsi_dir)/env.yml
-TECH_CONF          ?= tech-$(tech_name).yml
-TOOLS_CONF         ?= tools.yml
+TECH_CONF          ?= tech-$(tech_name)$(PLATFORM).yml
+TOOLS_CONF         ?= tools$(PLATFORM).yml
 CHIP_CONF         ?= design-ofo.yml
 INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF) $(CHIP_CONF)
 PIN_MAP            ?= pin-map-ofo.yml
+
 ifeq ($(IS_TOP_RUN),1)
 	HAMMER_EXEC        ?= ./hammer-driver 
 else

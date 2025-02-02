@@ -215,12 +215,12 @@ vlsi.technology.override_libraries:
       spice_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_fd_sc_hd.cdl
 vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
 vlsi.technology.extra_libraries:
-  # - library:
-  #     gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL16.gds
-  # - library:
-  #     gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL4.gds
-  # - library:
-  #     gds_file: /bwrcq/C/elamdf/sky130/virtuoso_workdir/FILL1.gds
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL16.gds
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL4.gds
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL1.gds
   - library:
       spice_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/devices.sp
   - library: # TODO: why is this required? seems like it isn't used in stacv2 repo
