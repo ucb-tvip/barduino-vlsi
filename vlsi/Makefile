@@ -40,9 +40,9 @@ HOSTNAME := $(shell hostname)
 
 # tech and tool paths will change, so use different configs- bwrc and inst[ructional] are common environments
 ifeq ($(findstring bwrc, $(HOSTNAME)),bwrc)
-	PLATFORM  = -bwrc
+	PLATFORM  ?= -bwrc
 else ifeq ($(findstring eda, $(HOSTNAME)),eda)
-	PLATFORM  = -inst
+	PLATFORM  ?= -inst
 endif
 
 ENV_YML            ?= $(vlsi_dir)/env.yml
@@ -71,6 +71,8 @@ ifneq ($(CUSTOM_VLOG),)
 else
 	OBJ_DIR          ?= $(vlsi_dir)/$(VLSI_OBJ_DIR)/$(long_name)-$(TOP)
 endif
+
+$(warning $(INPUT_CONFS))
 
 #########################################################################################
 # general rules
@@ -135,12 +137,12 @@ $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
 # synthesis input configuration
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
-GENERATED_CONFS = $(SYN_CONF) 
 
 ifeq ($(IS_TOP_RUN),1)
 	# only use ios if non commercial
 	GENERATED_CONFS = $(SYN_CONF) $(IO_FILE_CONF)
 endif
+GENERATED_CONFS ?= $(SYN_CONF) 
 
 ifeq ($(CUSTOM_VLOG), )
 	GENERATED_CONFS += $(SRAM_CONF)
@@ -202,10 +204,11 @@ $(IO_FILE_CONF): $(IO_FILE)
 
 .PHONY: buildfile
 buildfile: $(OBJ_DIR)/hammer.d
-	# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
-	# TODO: make this dependency smarter so that we don't need this at all
-	HAMMER_D_DEPS ?= $(GENERATED_CONFS)
-	$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
+# Tip: Set HAMMER_D_DEPS to an empty string to avoid unnecessary RTL rebuilds
+# TODO: make this dependency smarter so that we don't need this at all
+HAMMER_D_DEPS ?= $(GENERATED_CONFS)
+
+$(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
 	$(HAMMER_EXEC) -e $(ENV_YML) $(foreach x,$(INPUT_CONFS) $(GENERATED_CONFS), -p $(x)) --obj_dir $(OBJ_DIR) build
 
 -include $(OBJ_DIR)/hammer.d
