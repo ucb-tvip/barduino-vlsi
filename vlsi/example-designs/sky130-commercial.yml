@@ -31,6 +31,7 @@ vlsi.inputs.placement_constraints:
       top: 10
       bottom: 10
 #   # Place SRAM memory instances
+#   # to be placed by concurrent macro placer for pedagogical reasons
 #   # data cache
 #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_1/rockettile_dcache_data_arrays_0_ext/mem_0_0"
 #   
