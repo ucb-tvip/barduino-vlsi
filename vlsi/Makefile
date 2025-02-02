@@ -38,13 +38,11 @@ endif
 
 HOSTNAME := $(shell hostname)
 
-# tech and tool paths will change, so use different configs- bwrc, inst, or default (blank)
-PLATFORM := "AA"
-
+# tech and tool paths will change, so use different configs- bwrc and inst[ructional] are common environments
 ifeq ($(findstring bwrc, $(HOSTNAME)),bwrc)
-	PLATFORM  := "-bwrc"
+	PLATFORM  = -bwrc
 else ifeq ($(findstring eda, $(HOSTNAME)),eda)
-	PLATFORM  := "-inst"
+	PLATFORM  = -inst
 endif
 
 ENV_YML            ?= $(vlsi_dir)/env.yml
