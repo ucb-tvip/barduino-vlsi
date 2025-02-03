@@ -18,8 +18,9 @@ endif
 ifeq ($(tutorial),sky130-commercial)
     tech_name         ?= sky130
     CONFIG            ?= TinyRocketConfig
-    TOOLS_CONF        ?= example-tools.yml
-    TECH_CONF         ?= example-sky130.yml
+    #TOOLS_CONF        ?= example-tools.yml
+    #TECH_CONF         ?= example-sky130.yml
+	IS_TOP_RUN = 0
     DESIGN_CONFS      ?= example-designs/sky130-commercial.yml \
                         $(if $(filter $(VLSI_TOP),Rocket), \
                             example-designs/sky130-rocket.yml, )
