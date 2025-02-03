@@ -27,8 +27,28 @@ vlsi.technology.placement_site: "CoreSite"
 # SRAM Compiler compiler options
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
 
-# this is because the io cells use virtual connect pin names for rails
-lvs.calibre.virtual_connect_colon: true
+par.power_straps_mode: generate # Power Straps
+par.generate_power_straps_method: by_tracks
+par.blockage_spacing: 2.0
+par.blockage_spacing_top_layer: met4
+par.generate_power_straps_options:
+  by_tracks:
+    generate_rail_layer: false # sky130_scl has a hook for rails
+    strap_layers:
+      - met4
+      - met5
+    pin_layers:
+      - met5
+    blockage_spacing_met2: 4.0
+    track_width: 6
+    track_width_met5: 2
+    track_spacing: 1
+    track_start: 10
+    track_start_met5: 1
+    power_utilization: 0.1
+    power_utilization_met2: 0.05
+    power_utilization_met4: 0.15
+    power_utilization_met5: 0.5
 
 # Library stuff
 .local.library.sky130_fd_sc_hvl__lsbufhv2lv: &lib__sky130_fd_sc_hvl__lsbufhv2lv
