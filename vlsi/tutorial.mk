@@ -18,6 +18,7 @@ endif
 ifeq ($(tutorial),sky130-commercial)
     tech_name         ?= sky130
     CONFIG            ?= TinyRocketConfig
+	# these should be the ones from default makeefile
     #TOOLS_CONF        ?= example-tools.yml
     #TECH_CONF         ?= example-sky130.yml
 	IS_TOP_RUN = 0
@@ -26,6 +27,7 @@ ifeq ($(tutorial),sky130-commercial)
                             example-designs/sky130-rocket.yml, )
     VLSI_OBJ_DIR      ?= build-sky130-commercial
     INPUT_CONFS       ?= $(TOOLS_CONF) $(TECH_CONF) $(DESIGN_CONFS) $(EXTRA_CONFS)
+	IS_TOP_RUN = 0
 endif
 
 ifeq ($(tutorial),sky130-openroad)

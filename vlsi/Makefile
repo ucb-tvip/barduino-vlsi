@@ -72,8 +72,6 @@ else
 	OBJ_DIR          ?= $(vlsi_dir)/$(VLSI_OBJ_DIR)/$(long_name)-$(TOP)
 endif
 
-$(warning $(INPUT_CONFS))
-
 #########################################################################################
 # general rules
 #########################################################################################
@@ -138,11 +136,12 @@ $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
 
+GENERATED_CONFS = $(SYN_CONF) 
+
 ifeq ($(IS_TOP_RUN),1)
 	# only use ios if non commercial
 	GENERATED_CONFS = $(SYN_CONF) $(IO_FILE_CONF)
 endif
-GENERATED_CONFS ?= $(SYN_CONF) 
 
 ifeq ($(CUSTOM_VLOG), )
 	GENERATED_CONFS += $(SRAM_CONF)
