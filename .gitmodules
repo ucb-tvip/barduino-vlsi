@@ -153,7 +153,7 @@
 	url = https://github.com/ucb-bar/vexiiriscv-tile.git
 [submodule "generators/ofo"]
 	path = generators/ofo
-	url = git@github.com:elamdf/ofo-generator.git
+	url = https://github.com/ucb-eecs151tapeout/ofo-generator.git
 [submodule "vlsi/hammer"]
 	path = vlsi/hammer
 	url = https://github.com/ucb-eecs151tapeout/ofot-hammer

@@ -39,11 +39,11 @@ set_db route_design_top_routing_layer 5
 def place_concurrent_macros(x: HammerTool) -> bool:
     x.append("""
 # "A [placement] halo is an area that prevents the placement of blocks and standard cells within the specified halo distance, measured from the edges of a hard macro to reduce congestion."
-create_place_halo -halo_deltas {10 10 10 10} -all_blocks
+#create_place_halo -halo_deltas {10 10 10 10} -all_blocks
 # try to get innovus to place macros. This is a highly unconstrained optimization problem and innovus will struggle when the problem dimensions become nontrivial 
-place_design -concurrent_macros
+#place_design -concurrent_macros
 # legalize (snap to grid, etc.) macro placements
-place_macro_detail
+#place_macro_detail
 # still place the non-macro cells
 place_opt_design 
              """)
