@@ -304,7 +304,8 @@ class Driver(CLIDriver):
             HammerTool.make_pre_insertion_hook("syn_generic", flatten_analog_driver),
             HammerTool.make_pre_insertion_hook("syn_generic", chiptop_dont_touch),
 
-            HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
+            # SIMTODO: commented for sims
+            # HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
 
             # manually include the LEFs for the srams used by the 151 core since sram_compiler doesn't know about them
             HammerTool.make_persistent_hook(add_ofo_srams),
@@ -351,7 +352,8 @@ class Driver(CLIDriver):
             HammerTool.make_removal_hook("sky130_connect_nets"),
             HammerTool.make_removal_hook("sky130_connect_nets2"),
 
-            HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
+            # SIMTODO: commented for sims
+            # HammerTool.make_persistent_hook(patch_hvl_ls_lef),  # abuse persistent steps to chuck stuff in cache
         ]
     
     def get_extra_drc_hooks(self) -> List[HammerToolHookAction]:
