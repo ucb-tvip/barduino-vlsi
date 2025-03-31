@@ -218,3 +218,12 @@ $(OBJ_DIR)/hammer.d: $(HAMMER_D_DEPS)
 .PHONY: clean
 clean:
 	rm -rf $(VLSI_OBJ_DIR) hammer-vlsi*.log __pycache__ output.json $(GENERATED_CONFS) $(CLASSPATH_CACHE) $(gen_dir) $(SIM_CONF) $(SIM_DEBUG_CONF) $(SIM_TIMING_CONF) $(POWER_CONF)
+
+#########################################################################################
+# OFOT running VCS flag
+#########################################################################################
+
+# Define a flag to indicate the simulation Makefile is being run
+RUN_TYPE_FLAG =pd
+# Export the flag so it can be accessed outside the Makefile
+export RUN_TYPE_FLAG

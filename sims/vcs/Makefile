@@ -100,3 +100,12 @@ clean-sim:
 
 clean-sim-debug:
 	rm -rf $(model_dir_debug) $(build_dir)/vc_hdrs.h $(sim_debug) $(sim_debug).daidir ucli.key
+
+#########################################################################################
+# OFOT running VCS flag
+#########################################################################################
+
+# Define a flag to indicate the simulation Makefile is being run
+RUN_TYPE_FLAG =sim
+# Export the flag so it can be accessed outside the Makefile
+export RUN_TYPE_FLAG
