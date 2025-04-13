@@ -408,6 +408,7 @@ lazy val firechip = (project in file("generators/firechip/chip"))
     Test / testOptions += Tests.Argument("-oF")
   )
   .settings(scalaTestSettings)
+  
 lazy val ofo = (project in file("generators/ofo"))
   .dependsOn(rocketchip)
     .settings(libraryDependencies ++= rocketLibDeps.value)
