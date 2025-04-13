@@ -19,7 +19,12 @@ lvs.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
 lvs.pegasus.version: "221"
 # VCS options
 vlsi.core.sim_tool: "hammer.sim.vcs"
-sim.vcs.version: "S-2021.09-SP1-1"
+sim.vcs.version: "P-2019.06"
+sim.vcs.vcs_bin: "/share/instsww/synopsys-new/vcs/P-2019.06/bin/vcs"
+sim.vcs.vcs_home: "/share/instsww/synopsys-new/vcs/P-2019.06/"
+sim.vcs.verdi_bin: "/share/instsww/synopsys-new/verdi/P-2019.06/bin/verdi"
+sim.vcs.verdi_home: "/share/instsww/synopsys-new/verdi/P-2019.06/"
+sim.outputs.waveforms: "/scratch/eecs251b-aae/chipyard/vlsi/output"
 # Voltus options
 vlsi.core.power_tool: "hammer.power.voltus"
 power.joules.version: "211"
