@@ -64,6 +64,12 @@ class WithUARTAdapter extends HarnessBinder({
 })
 // DOC include end: WithUARTAdapter
 
+class WithSPIFlashTiedOff extends HarnessBinder({
+  case (th: HasHarnessInstantiators, port: SPIFlashPort, chipId: Int) => {
+    port.io <> DontCare
+  }
+})
+
 class WithSimSPIFlashModel(rdOnly: Boolean = true) extends HarnessBinder({
   case (th: HasHarnessInstantiators, port: SPIFlashPort, chipId: Int) => {
     val spi_mem = Module(new SimSPIFlashModel(port.params.fSize, port.spiId, rdOnly)).suggestName(s"spi_mem${port.spiId}")

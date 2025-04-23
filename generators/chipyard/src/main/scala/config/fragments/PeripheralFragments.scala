@@ -16,6 +16,7 @@ import sifive.blocks.devices.uart._
 import sifive.blocks.devices.spi._
 import sifive.blocks.devices.i2c._
 import sifive.blocks.devices.timer._
+import sifive.blocks.devices.pwm._
 
 import testchipip._
 
@@ -46,9 +47,9 @@ class WithBootROM(address: BigInt = 0x10000, size: Int = 0x10000, hang: BigInt =
  * @param address the address of the GPIO device
  * @param width the number of pins of the GPIO device
  */
-class WithGPIO(address: BigInt = 0x10010000, width: Int = 4) extends Config ((site, here, up) => {
+class WithGPIO(address: BigInt = 0x10010000, width: Int = 4, includeIOF: Boolean = false) extends Config ((site, here, up) => {
   case PeripheryGPIOKey => up(PeripheryGPIOKey) ++ Seq(
-    GPIOParams(address = address, width = width, includeIOF = false))
+    GPIOParams(address = address, width = width, includeIOF = includeIOF))
 })
 // DOC include end: gpio config fragment
 
@@ -97,9 +98,9 @@ class WithSPIFlash(size: BigInt = 0x10000000, address: BigInt = 0x10030000, fAdd
   *
   * @param address the address of the SPI controller
   */
-class WithSPI(address: BigInt = 0x10031000) extends Config((site, here, up) => {
+class WithSPI(address: BigInt = 0x10031000, chipselWidth: Int = 1) extends Config((site, here, up) => {
   case PeripherySPIKey => up(PeripherySPIKey) ++ Seq(
-    SPIParams(rAddress = address))
+    SPIParams(rAddress = address, csWidth = chipselWidth))
 })
 
 /**
@@ -135,6 +136,16 @@ class WithJTAGDTMKey(idcodeVersion: Int = 2, partNum: Int = 0x000, manufId: Int 
     idcodePartNum = partNum,
     idcodeManufId = manufId,
     debugIdleCycles = debugIdleCycles)
+})
+
+/**
+  * Config fragment for adding a PWM peripheral device to the SoC
+  *
+  * @param address the address of the PWM controller
+  */
+class WithPWM(address: BigInt = 0x10060000, channels: Int = 4, cmpWidth: Int = 16) extends Config((site, here, up) => {
+  case PeripheryPWMKey => up(PeripheryPWMKey) ++ Seq(
+    PWMParams(address = address, size = 0x1000, regBytes = 4, ncmp = channels, cmpWidth = cmpWidth))
 })
 
 class WithTLBackingMemory extends Config((site, here, up) => {

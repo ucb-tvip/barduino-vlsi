@@ -8,13 +8,13 @@ pins:
   N11: custom_boot
   W10: uart_0_txd
   W11: uart_0_rxd
-  E20: 
-  W19: 
-  W18: 
-  W17: 
-  W16: 
-  W15: 
-  W14: 
+  E20: serial_tl_0_clock_in
+  W19: serial_tl_0_in_valid
+  W18: serial_tl_0_out_bits_phit
+  W17: serial_tl_0_in_bits_phit
+  W16: serial_tl_0_in_ready
+  W15: serial_tl_0_out_valid
+  W14: serial_tl_0_out_ready
 extra_insts:
   bottom:
     - name: IO_FILLER_MANUAL_S_1

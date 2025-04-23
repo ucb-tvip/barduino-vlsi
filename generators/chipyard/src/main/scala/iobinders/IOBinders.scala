@@ -237,7 +237,7 @@ class WithSPIIOPunchthrough extends OverrideLazyIOBinder({
     InModuleBody {
       val spi = system.spi
       val ports = spi.zipWithIndex.map({ case (s, i) =>
-        val io_spi = IO(s.cloneType).suggestName(s"spi_$i")
+        val io_spi = IO(s.cloneType).suggestName(s"qspi_$i")
         io_spi <> s
         SPIPort(() => io_spi)
       })

@@ -288,8 +288,10 @@ case class Sky130EFIOCellTypeParams(
   gpioCellName: String = consts.defaultGPIOCellName,
   resetCellName: String = consts.defaultXRes4V2CellName,
   sim: Boolean
-) extends IOCellTypeParams {
+) extends IOCellTypeParams 
+{
 //  override def analog() = Module(new Sky130EFGPIOV2CellAnalog(cellName = gpioCellName))
+
   override def analog() = Module(new Sky130EFAnalogCellIOCell(cellName = "sky130_ef_io__analog_pad_esd2"))
 
   override def gpio() = Module(new Sky130EFGPIOV2CellIO(cellName = gpioCellName, sim = sim))
@@ -299,6 +301,38 @@ case class Sky130EFIOCellTypeParams(
   override def output() = Module(new Sky130EFGPIOV2CellOut(cellName = gpioCellName, sim = sim))
 
   def reset() = Module(new Sky130FDXRes4V2IOCell(cellName = resetCellName, sim = sim))
+
+
+
+  //   override def gpio() = {
+  //   val cell = Module(new Sky130EFGPIOV2CellIO(cellName = gpioCellName, sim = sim))
+  //   Sky130EFIORegistry.register(cell)
+  //   cell
+  // }
+
+  // override def input() = {
+  //   val cell = Module(new Sky130EFGPIOV2CellIn(cellName = gpioCellName, sim = sim))
+  //   Sky130EFIORegistry.register(cell)
+  //   cell
+  // }
+
+  // override def output() = {
+  //   val cell = Module(new Sky130EFGPIOV2CellOut(cellName = gpioCellName, sim = sim))
+  //   Sky130EFIORegistry.register(cell)
+  //   cell
+  // }
+
+  // override def analog() = {
+  //   val cell = Module(new Sky130EFAnalogCellIOCell(cellName = "sky130_ef_io__analog_pad_esd2"))
+  //   Sky130EFIORegistry.register(cell)
+  //   cell
+  // }
+
+  // def reset() = {
+  //   val cell = Module(new Sky130FDXRes4V2IOCell(cellName = resetCellName, sim = sim))
+  //   Sky130EFIORegistry.register(cell)
+  //   cell
+  // }
 
   override val custom = {
     case (name, coreSignal: AsyncReset, padSignal: AsyncReset)
@@ -319,43 +353,85 @@ class WithSky130EFIOCells(cellName: String = consts.defaultGPIOCellName, sim: Bo
   case IOCellKey => Sky130EFIOCellTypeParams(gpioCellName = cellName, sim = sim)
 })
 
+// trait HasSky130EFIOCells {
+//   this: LazyModule with HasSky130EFCaravelPOR =>
+
+//   val sky130EFIOCellInsts: mutable.Buffer[Sky130EFIOCellLike] = mutable.Buffer[Sky130EFIOCellLike]()
+
+//   val AMUXBUS: ModuleValue[Option[(Analog, Analog)]] = InModuleBody {
+//     this match {
+//       case top: HasIOBinders => {
+//         top.iocells.getWrappedValue.collectFirst {
+//           case (cell: Sky130EFIOCellLike) => (cell.commonIO.AMUXBUS_A, cell.commonIO.AMUXBUS_B)
+//         }
+//       }
+//       case _ => None
+//     }
+//   }
+
+//   def registerSky130EFIOCell(cell: Sky130EFIOCellLike): Unit = {
+//     cell.commonIO.porb_h := porb_h.getWrappedValue
+//     AMUXBUS.getWrappedValue match {
+//       case Some((amuxbus_a, amuxbus_b)) => {
+//         attach(cell.commonIO.AMUXBUS_A, amuxbus_a)
+//         attach(cell.commonIO.AMUXBUS_B, amuxbus_b)
+//       }
+//     }
+
+//     sky130EFIOCellInsts.append(cell)
+//   }
+
+//   InModuleBody {
+//     this match {
+//       case top: HasIOBinders =>
+//         top.iocells.getWrappedValue.foreach {
+//           case cell: Sky130EFIOCellLike => registerSky130EFIOCell(cell)
+//           case _ =>
+//         }
+//     }
+//   }
+
+//   ElaborationArtefacts.add("sky130io.json", {
+//     "[\n" + sky130EFIOCellInsts.map { cell =>
+//       val s =
+//         s"""
+//            |  {
+//            |    "name": ${cell.signalName.map(n => s"\"$n\"").getOrElse("null")}
+//            |  }
+//            |""".stripMargin
+//       s.substring(1, s.length - 1)
+//     }.mkString(",\n") + "\n]"
+//   })
+// }
+
 trait HasSky130EFIOCells {
   this: LazyModule with HasSky130EFCaravelPOR =>
 
   val sky130EFIOCellInsts: mutable.Buffer[Sky130EFIOCellLike] = mutable.Buffer[Sky130EFIOCellLike]()
 
-  val AMUXBUS: ModuleValue[Option[(Analog, Analog)]] = InModuleBody {
-    this match {
-      case top: HasIOBinders => {
-        top.iocells.getWrappedValue.collectFirst {
-          case (cell: Sky130EFIOCellLike) => (cell.commonIO.AMUXBUS_A, cell.commonIO.AMUXBUS_B)
-        }
-      }
-      case _ => None
-    }
-  }
+  // val AMUXBUS: ModuleValue[Option[(Analog, Analog)]] = InModuleBody {
+  //   this match {
+  //     case top: HasIOBinders => {
+  //       top.iocells.getWrappedValue.collectFirst {
+  //         case (cell: Sky130EFIOCellLike) => (cell.commonIO.AMUXBUS_A, cell.commonIO.AMUXBUS_B)
+  //       }
+  //     }
+  //     case _ => None
+  //   }
+  // }
 
   def registerSky130EFIOCell(cell: Sky130EFIOCellLike): Unit = {
     cell.commonIO.porb_h := porb_h.getWrappedValue
-    AMUXBUS.getWrappedValue match {
-      case Some((amuxbus_a, amuxbus_b)) => {
-        attach(cell.commonIO.AMUXBUS_A, amuxbus_a)
-        attach(cell.commonIO.AMUXBUS_B, amuxbus_b)
-      }
-    }
+    // AMUXBUS.getWrappedValue match {
+    //   case Some((amuxbus_a, amuxbus_b)) => {
+    //     attach(cell.commonIO.AMUXBUS_A, amuxbus_a)
+    //     attach(cell.commonIO.AMUXBUS_B, amuxbus_b)
+    //   }
+    // }
 
     sky130EFIOCellInsts.append(cell)
   }
 
-  InModuleBody {
-    this match {
-      case top: HasIOBinders =>
-        top.iocells.getWrappedValue.foreach {
-          case cell: Sky130EFIOCellLike => registerSky130EFIOCell(cell)
-          case _ =>
-        }
-    }
-  }
 
   ElaborationArtefacts.add("sky130io.json", {
     "[\n" + sky130EFIOCellInsts.map { cell =>
@@ -369,3 +445,36 @@ trait HasSky130EFIOCells {
     }.mkString(",\n") + "\n]"
   })
 }
+
+// object Sky130EFIORegistry {
+//   val sky130EFIOCellInsts = mutable.Buffer[Sky130EFIOCellLike]()
+
+//   var porb_h: Option[Bool] = None
+//   // var amuxbus: Option[(Analog, Analog)] = None
+
+//   def register(cell: Sky130EFIOCellLike): Unit = {
+//     porb_h.foreach { h => cell.commonIO.porb_h := h }
+//     // amuxbus.foreach { case (a, b) =>
+//     //   attach(cell.commonIO.AMUXBUS_A, a)
+//     //   attach(cell.commonIO.AMUXBUS_B, b)
+//     // }
+//     sky130EFIOCellInsts.append(cell)
+//   }
+
+//   def emitJSON(): Unit = {
+//       ElaborationArtefacts.add("sky130io.json", {
+//       "[\n" + sky130EFIOCellInsts.map { cell =>
+//         val s =
+//           s"""
+//             |  {
+//             |    "name": ${cell.signalName.map(n => s"\"$n\"").getOrElse("null")}
+//             |  }
+//             |""".stripMargin
+//         s.substring(1, s.length - 1)
+//       }.mkString(",\n") + "\n]"
+//     })
+//   }
+// }
+// trait ElaborateJSON {
+//   Sky130EFIORegistry.emitJSON()
+// }

@@ -1,0 +1,302 @@
+vlsi.core.technology: "hammer.technology.sky130"
+
+vlsi.core.max_threads: 32
+
+# Technology paths
+technology.sky130:
+  sky130A: "/home/ff/ee198/ee198-20/sky130_col/open_pdks-2022.10/share/pdk/sky130A"
+  # sram22_sky130_macros: "/tools/commercial/skywater/local/chipyard-tutorial/sram22_sky130_macros"
+  sram22_sky130_macros: "/home/ff/ee198/ee198-20/sky130_col/sram22_sky130_macros/"
+  # https://github.com/rahulk29/sram22_sky130_macros/tree/dev
+
+  # this key is OPTIONAL, no NDA files will be used if it does not point to a valid path
+  # sky130_nda: "/tools/commercial/skywater/swtech130/skywater-src-nda"
+
+  # for caravel collateral pulled in by this design
+  caravel: /home/ff/ee198/ee198-20/sky130_col/caravel/v6.0
+
+  lvs_blackbox_srams: true
+  drc_blackbox_srams: true
+  sky130_scl: "/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.0.6"
+  sky130_cds: "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.4/"
+  stdcell_library: "sky130_scl"
+  #stdcell_library: "sky130_fd_sc_hd"
+  
+technology.core.stackup: "sky130_scl"
+vlsi.technology.placement_site: "CoreSite"
+
+# SRAM Compiler compiler options
+vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
+vlsi.core.build_system: make
+
+vlsi:
+  inputs:
+    power_spec_mode: "auto"
+    power_spec_type: "cpf"
+  # Placement Constraints
+    placement_constraints:
+      - path: "ChipTop"
+        type: toplevel
+        x: 0
+        y: 0
+        width: 3588
+        height: 2992
+        margins:
+          left: 10.12
+          right: 10.12
+          top: 10.88
+          bottom: 10.88
+      # Place SRAM memory instances
+      # data cache
+      - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+        type: hardmacro
+        x: 49.68
+        y: 149.6
+        orientation: r90
+      # - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_1/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+      #   type: hardmacro
+      #   x: 49.68
+      #   y: 748
+      #   orientation: r90
+      # tag array
+      - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_tag_array_0/rockettile_icache_tag_array_0_ext/mem_0_0"
+        type: hardmacro
+        x: 2612.8
+        y: 1033.6
+        orientation: mx90
+      # instruction cache
+      - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_0_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+        type: hardmacro
+        x: 2612.8
+        y: 149.6
+        orientation: mx90
+      - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_1_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+        type: hardmacro
+        x: 2612.8
+        y: 598.4
+        orientation: mx90
+      # power on reset
+      # - path: ChipTop/axi4_mem_0_bits_aw_bits_addr
+      #   type: placement
+      #   side: top
+      #   bus:
+      #   - 0
+      #   - 31
+      #   offset: 10
+      #   pitch: 5
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/axi4_mem_0_bits_aw_bits_id
+      #   type: placement
+      #   side: top
+      #   bus:
+      #   - 0
+      #   - 3
+      #   offset: 10
+      #   pitch: 5
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/axi4_mem_0_clock
+      #   type: placement
+      #   side: top
+      #   offset: 200
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/axi4_mem_0_bits_aw_ready
+      #   type: placement
+      #   side: top
+      #   offset: 210
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/axi4_mem_0_bits_aw_valid
+      #   type: placement
+      #   side: top
+      #   offset: 220
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/reset_io
+      #   type: placement
+      #   side: top
+      #   offset: 230
+      #   width: 1
+      #   height: 1
+      # - path: ChipTop/clock_uncore
+      #   type: placement
+      #   side: top
+      #   offset: 240
+      #   width: 1
+      #   height: 1
+      - path: ChipTop/system
+        type: obstruction
+        obs_types: [power, place, route]
+        layers: [met1]
+        x: 3243
+        y: 252
+        width: 34
+        height: 48
+
+
+vlsi.inputs.pin_mode: generated
+vlsi.inputs.pin.generate_mode: semi_auto
+vlsi.inputs.pin: [
+  {pins: "*", layers: ["met2", "met4"], side: "bottom"}
+]
+# vlsi.inputs.pin:
+#   - bus:
+#       - 28
+#       - 31
+#     layers:
+#       - met2
+#     offset: 10.0
+#     pins:
+#       - ChipTop/axi4_mem_0_bits_aw_bits_addr
+#     pitch: 2.0
+#     side: right
+#   - bus:
+#       - 0
+#       - 3
+#     layers:
+#       - met2
+#     offset: 20.0
+#     pins:
+#       - ChipTop/axi4_mem_0_bits_aw_bits_id
+#     pitch: 2.0
+#     side: top
+#   - layers:
+#       - met2
+#     pins:
+#       - ChipTop/axi4_mem_0_bits_aw_ready
+#     side: top
+#   - layers:
+#       - met2
+#     pins:
+#       - ChipTop/axi4_mem_0_bits_aw_valid
+#     side: top
+#   - layers:
+#       - met2
+#     pins:
+#       - ChipTop/axi4_mem_0_clock
+#     side: top
+
+
+design.def.hv_routing_meta: prependlocal
+design.def.hv_routing: ofo-hv-routing.def
+
+par.power_straps_mode: generate # Power Straps
+par.generate_power_straps_method: by_tracks
+par.blockage_spacing: 2.0
+par.blockage_spacing_top_layer: met4
+par.generate_power_straps_options:
+  by_tracks:
+    generate_rail_layer: false # sky130_scl has a hook for rails
+    strap_layers:
+      - met4
+      - met5
+    pin_layers:
+      - met5
+    blockage_spacing_met2: 4.0
+    track_width: 6
+    track_width_met5: 2
+    track_spacing: 1
+    track_start: 10
+    track_start_met5: 1
+    power_utilization: 0.1
+    power_utilization_met2: 0.05
+    power_utilization_met4: 0.15
+    power_utilization_met5: 0.5
+
+# Library stuff
+.local.library.sky130_fd_sc_hvl__lsbufhv2lv: &lib__sky130_fd_sc_hvl__lsbufhv2lv
+  # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
+  gds_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_fd_sc_hvl__lsbufhv2lv_1.gds
+  lef_file: cache/fd_sc_hvl__lef/sky130_fd_sc_hvl__lsbufhv2lv_1.lef
+  spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_fd_sc_hvl.cdl
+  # spice_file: /tools/C/nayiri/sky130/chipyard-jun23_tapeout/vlsi/sky130_fd_sc_hvl.cdl
+  verilog_sim: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/verilog/sky130_fd_sc_hvl__lsbufhv2lv.functional.v
+  provides:
+    - lib_type: lvlshift
+      vt: RVT
+# .local.library.MultiPLLTop: &lib__MultiPLLTop
+#   # gds_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/gds/sky130_fd_sc_hvl.gds
+#   gds_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/gds/MutliPLLTop_clean_6_2_0156.gds
+#   lef_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/lef/MultiPLLTop.lef
+#   spice_file: /tools/C/sehuang/sky130/jun23/jun23_pll_handoff/spice/MultiPLLTop.lvs.sp
+#   # TODO: verilog sim
+#   provides:
+#     - lib_type: block
+#       vt: RVT
+
+vlsi.technology.manually_override_pdk_collateral: true
+vlsi.technology.override_libraries_meta: ["append", "lazydeepsubst"]
+vlsi.technology.override_libraries:
+  - library:
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_fd_io.spice
+  - library:
+      gds_file: ["/home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_ef_io_with_overlay.gds", "sky130_ef_io.gds"]
+      # this is hacked in sky130/__init__.py
+      #lef_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_io/lef/sky130_ef_io.lef
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_ef_io.spice
+  - library:
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_fd_sc_hd.cdl
+vlsi.technology.extra_libraries_meta: ["append", "lazydeepsubst"]
+vlsi.technology.extra_libraries:
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL16.gds
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL4.gds
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/FILL1.gds
+  - library:
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/devices.sp
+  - library: # TODO: why is this required? seems like it isn't used in stacv2 repo
+      spice_file: ${technology.sky130.sram22_sky130_macros}/sram22.spice
+  - library:
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_fd_io.spice
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ss_100C_1v65_lv1v60.lib
+      corner:
+        nmos: "slow"
+        pmos: "slow"
+        temperature: "100 C"
+      supplies:
+        VDD: "1.60 V"
+        GND: "0 V"
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__ff_n40C_5v50_lv1v95_ccsnoise.lib
+      corner:
+        nmos: "fast"
+        pmos: "fast"
+        temperature: "-40 C"
+      supplies:
+        VDD: "1.95 V"
+        GND: "0 V"
+  - library:
+      <<: *lib__sky130_fd_sc_hvl__lsbufhv2lv
+      nldm_liberty_file: ${technology.sky130.sky130A}/libs.ref/sky130_fd_sc_hvl/lib/sky130_fd_sc_hvl__tt_025C_3v30_lv1v80.lib
+      corner:
+        nmos: "typical"
+        pmos: "typical"
+        temperature: "025 C"
+      supplies:
+        VDD: "1.80 V"
+        GND: "0 V"
+  - library:
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.gds
+      lef_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_ef_io__connect_vcchib_vccd_and_vswitch_vddio_and_vssio_vssa_vssd_slice_20um.lef
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_ef_io.spice
+  - library:
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_ef_io__analog_pad_esd2.cdl
+      gds_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_ef_io__analog_pad_esd2.gds
+      lef_file: /home/ff/ee198/ee198-20/sky130_col/stac_misc_collat/sky130_ef_io__analog_pad_esd2.lef
+      provides:
+        - lib_type: iocell
+  - library:
+      gds_file: ${technology.sky130.caravel}/gds/simple_por.gds
+      lef_file: ${technology.sky130.caravel}/lef/simple_por.lef
+      spice_file: /home/ff/ee198/ee198-20/sky130_col/io_lvs/sky130_ef_io.spice
+      verilog_sim: ${technology.sky130.caravel}/verilog/rtl/simple_por.v
+      provides:
+        - lib_type: por
+          vt: RVT

@@ -151,9 +151,6 @@
 [submodule "generators/vexiiriscv"]
 	path = generators/vexiiriscv
 	url = https://github.com/ucb-bar/vexiiriscv-tile.git
-[submodule "generators/ofo"]
-	path = generators/ofo
-	url = https://github.com/ucb-eecs151tapeout/ofo-generator.git
 [submodule "vlsi/hammer"]
 	path = vlsi/hammer
 	url = https://github.com/ucb-eecs151tapeout/ofot-hammer

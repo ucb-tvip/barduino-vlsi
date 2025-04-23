@@ -11,7 +11,7 @@ class Sky130ChipTop(implicit p: Parameters) extends ChipTop()(p)
   // Copied from example.CustomChipTop:
   // making the module name ChipTop instead of Sky130ChipTop means
   // we don't have to set the TOP make variable to Sky130ChipTop
-  override lazy val desiredName = "ChipTop"
+  override lazy val desiredName = "Sky130ChipTop"
 }
 
 class WithSky130ChipTop extends Config((site, here, up) => {

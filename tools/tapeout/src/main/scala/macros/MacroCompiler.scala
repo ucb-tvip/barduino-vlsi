@@ -302,6 +302,9 @@ class MacroCompilerPass(
     val pairedPorts = mem.sortedPorts.zip(lib.sortedPorts)
 
     // Width mapping. See calculateBitPairs.
+    print(mem)
+    print("\n")
+    print(lib)
     val bitPairs: Seq[(BigInt, BigInt)] = calculateBitPairs(mem, lib)
     if (bitPairs.isEmpty) {
       System.err.println("Error occurred during bitPairs calculations (bitPairs is empty).")

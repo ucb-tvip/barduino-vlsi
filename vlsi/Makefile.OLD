@@ -48,8 +48,8 @@ endif
 ENV_YML            ?= $(vlsi_dir)/env.yml
 TECH_CONF          ?= tech-$(tech_name)$(PLATFORM).yml
 TOOLS_CONF         ?= tools$(PLATFORM).yml
-CHIP_CONF         ?= design-ofo.yml
-INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF) $(CHIP_CONF)
+# CHIP_CONF         ?= design-ofo.yml
+INPUT_CONFS        ?= $(TOOLS_CONF) $(TECH_CONF)
 PIN_MAP            ?= pin-map-ofo.yml
 
 ifeq ($(IS_TOP_RUN),1)
@@ -189,11 +189,13 @@ include $(vlsi_dir)/power.mk
 IO_FILE_CONF = $(OBJ_DIR)/io_map-input.yml
 IO_FILE = $(OBJ_DIR)/io_map.io
 
+$(warning	 $(OBJ_DIR))
+
 $(IO_FILE): scripts/gen-io-file.py $(PIN_MAP) $(build_dir)/$(long_name).sky130io.json
 	$< $(PIN_MAP) -d $(build_dir)/$(long_name).sky130io.json -o $@
 
 $(IO_FILE_CONF): $(IO_FILE)
-	mkdir -p $(dir $@)
+	echo mkdir -p $(dir $@)
 	echo "technology.sky130.io_file: '$(notdir $(IO_FILE))'" >> $@
 	echo "technology.sky130.io_file_meta: \"prependlocal\"">> $@
 
