@@ -6,15 +6,41 @@ pins:
   S7: jtag_TDI
   S8: jtag_TDO
   N11: custom_boot
-  W10: uart_0_txd
-  W11: uart_0_rxd
-  E20: 
-  W19: 
-  W18: 
-  W17: 
-  W16: 
-  W15: 
-  W14: 
+  W9: uart_0_txd
+  W10: uart_0_rxd
+  W11: serial_tl_clock_in
+  W19: serial_tl_in_valid
+  W18: serial_tl_out_bits_phit
+  W17: serial_tl_in_bits_phit
+  W16: serial_tl_in_ready
+  W15: serial_tl_out_valid
+  W14: serial_tl_out_ready
+  E1: qspi_0_cs_0
+  E3: qspi_0_sck
+  E5: qspi_0_dq_0
+  E6: qspi_0_dq_1
+  E7: qspi_0_dq_2
+  E8: qspi_0_dq_3
+  E9: gpio_iocell_1
+  E10: gpio_iocell_2
+  E14: gpio_iocell_3
+  E15: gpio_iocell_4
+  E16: gpio_iocell_5
+  E17: gpio_iocell_6
+  E18: gpio_iocell_7
+  E19: gpio_iocell_8
+  W1: gpio_iocell_9
+  W5: gpio_iocell_10
+  W6: gpio_iocell_11
+  W7: gpio_iocell_12
+  W8: gpio_iocell_13
+  E20: gpio_iocell_14
+  N1: gpio_iocell_15
+  N2: gpio_iocell_16
+  N3: gpio_iocell_17
+  N4: gpio_iocell_18
+  N5: gpio_iocell_19
+  N7: gpio_iocell_0
 extra_insts:
   bottom:
     - name: IO_FILLER_MANUAL_S_1

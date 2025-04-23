@@ -91,6 +91,6 @@ class BarduinoConfig extends Config(
 
   // SETUP RING
   new chipyard.sky130.WithSky130EFIOCells(sim = false) ++
-  // new chipyard.sky130.WithSky130EFIOTotalCells(46) ++
+  new chipyard.sky130.WithSky130EFIOTotalCells(45) ++
 
   new chipyard.config.AbstractConfig)

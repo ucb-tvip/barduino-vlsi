@@ -36,7 +36,7 @@ class BarduinoChipTop(implicit p: Parameters) extends LazyModule
   with HasChipyardPorts 
   with chipyard.sky130.HasSky130EFCaravelPOR
   with chipyard.sky130.HasSky130EFIOCells
-// with chipyard.sky130.HasSky130EFIONoConnCells
+with chipyard.sky130.HasSky130EFIONoConnCells
   // with ElaborateJSON
  {
   override lazy val desiredName = "ChipTop"

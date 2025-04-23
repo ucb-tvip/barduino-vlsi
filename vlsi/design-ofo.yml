@@ -58,7 +58,7 @@ vlsi.inputs:
     # primary clock (for all TL busses)
     - {name: "clock", path: "clock", period: "200ns", uncertainty: "0.1ns"}
     # serial tl clock
-    - {name: "tl_clock", path: "iocell_serial_tl_0_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
+    - {name: "tl_clock", path: "iocell_serial_tl_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
     # jtag clock
     - {name: "jtag_TCK", path: "iocell_jtag_TCK/iocell/IN", period: "200ns", uncertainty: "1ns"}
 

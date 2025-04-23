@@ -11,12 +11,13 @@ case class FillNoConnCellsParams(totalCells: Int, cellName: String)
 case object FillNoConnCellsKey extends Field[FillNoConnCellsParams]()
 
 trait HasSky130EFIONoConnCells {
-  this: HasSky130EFIOCells with HasIOBinders with LazyModule =>
+  this: HasSky130EFIOCells with LazyModule =>
 
   val params = p(FillNoConnCellsKey)
 
   val noconnIOCells: ModuleValue[Seq[Sky130EFGPIOV2CellIOCellBase]] = InModuleBody {
-    val instantiatedCount = iocells.getWrappedValue.size
+    // val instantiatedCount = iocells.getWrappedValue.size
+    val instantiatedCount = 42 // TODO: HARDCODED BASED ON PIN-MAP-OFO.YML
 
     val toGenerate = params.totalCells - instantiatedCount
     require(toGenerate >= 0,

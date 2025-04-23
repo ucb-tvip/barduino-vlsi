@@ -286,6 +286,7 @@ def generate_iofile(iomap: IOMap, design_info: DesignInfo | None) -> IOFileModel
                 add({"name": get_inst_path_for_signal(iomap.pins[site_name])})
                 n_signals += 1
             else:
+                print(f"missing site_name: {site_name}")
                 add({"name": get_inst_path_for_nc(nc_idx)})
                 nc_idx += 1
 
