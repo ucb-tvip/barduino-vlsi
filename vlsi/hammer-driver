@@ -12,22 +12,48 @@ from hammer.technology.sky130 import SKY130Tech
 import json
 
 CHIPTOP_IO_NETS = [
- "reset",
- "clock",
- "jtag_TCK",
- "jtag_TMS",
- "jtag_TDI",
- "jtag_TDO",
- "custom_boot",
- "uart_0_txd",
- "uart_0_rxd",
- "serial_tl_0_clock_in",
- "serial_tl_0_in_valid",
- "serial_tl_0_out_bits_phit",
- "serial_tl_0_in_bits_phit",
- "serial_tl_0_in_ready",
- "serial_tl_0_out_valid",
- "serial_tl_0_out_ready",
+    "reset",
+    "clock",
+    "jtag_TCK",
+    "jtag_TMS",
+    "jtag_TDI",
+    "jtag_TDO",
+    "custom_boot",
+    "uart_0_txd",
+    "uart_0_rxd",
+    "serial_tl_clock_in",
+    "serial_tl_in_valid",
+    "serial_tl_out_bits_phi",
+    "serial_tl_in_bits_phit",
+    "serial_tl_in_ready",
+    "serial_tl_out_valid",
+    "serial_tl_out_ready",
+    "qspi_0_cs_0",
+    "qspi_0_sck",
+    "qspi_0_dq_0",
+    "qspi_0_dq_1",
+    "qspi_0_dq_2",
+    "qspi_0_dq_3",
+    "gpio_iocell_1",
+    "gpio_iocell_2",
+    "gpio_iocell_3",
+    "gpio_iocell_4",
+    "gpio_iocell_5",
+    "gpio_iocell_6",
+    "gpio_iocell_7",
+    "gpio_iocell_8",
+    "gpio_iocell_9",
+    "gpio_iocell_10",
+    "gpio_iocell_11",
+    "gpio_iocell_12",
+    "gpio_iocell_13",
+    "gpio_iocell_14",
+    "gpio_iocell_15",
+    "gpio_iocell_16",
+    "gpio_iocell_17",
+    "gpio_iocell_18",
+    "gpio_iocell_19",
+    "gpio_iocell_0",
     "VDDIO",
     "VDD",
     "VDDA",
@@ -293,6 +319,11 @@ route_special -connect floating_stripe -floating_stripe_target ring -nets {VDD V
 ''')
     return True
 
+def ignore_por_timing(x: HammerTool) -> bool:
+    x.append("""
+        set_false_path -from jtag_TCK -to clock_gating_default
+    """)
+    return True
 
 class Driver(CLIDriver):
     def get_extra_synthesis_hooks(self) -> List[HammerToolHookAction]:
@@ -318,6 +349,7 @@ class Driver(CLIDriver):
             HammerTool.make_pre_insertion_hook("place_opt_design", derate_srams),
 
             # move fillers step to after opt_design
+            # HammerTool.make_pre_insertion_hook("opt_design", ignore_por_timing), # ignore POR
             HammerTool.make_removal_hook("add_fillers"),
             HammerTool.make_post_insertion_hook("opt_design", add_fillers),
 
