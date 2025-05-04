@@ -56,7 +56,7 @@ vlsi.inputs:
 
   clocks:
     # primary clock (for all TL busses)
-    - {name: "clock", path: "clock", period: "300ns", uncertainty: "0.1ns"}
+    - {name: "clock", path: "clock", period: "25ns", uncertainty: "0.1ns"}
     # serial tl clock
     - {name: "tl_clock", path: "iocell_serial_tl_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
     # jtag clock
@@ -100,74 +100,7 @@ vlsi.inputs:
       x: 1250
       y: 3076
       orientation: my90
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram0"
-    #   type: hardmacro
-    #   x: 1812.51
-    #   y: 2357.62
-    #   orientation: r270
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/meta_sram"
-    #   type: hardmacro
-    #   x: 2457.535
-    #   y: 3170.31
-    #   orientation: r270
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/meta_sram"
-    #   type: hardmacro
-    #   x: 1935.21
-    #   y: 3070.31
-    #   orientation: r270
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram1"
-    #   type: hardmacro
-    #   x: 1812.51
-    #   y: 1794.895
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram2"
-    #   type: hardmacro
-    #   x: 1812.51
-    #   y: 1222.47
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram3"
-    #   type: hardmacro
-    #   x: 1812.51
-    #   y: 659.745
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram0"
-    #   type: hardmacro
-    #   x: 2457.535
-    #   y: 2457.62
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram1"
-    #   type: hardmacro
-    #   x: 2457.535
-    #   y: 1894.895
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram2"
-    #   type: hardmacro
-    #   x: 2457.535
-    #   y: 1322.47
-    #   orientation: r270
-
-
-    # - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram3"
-    #   type: hardmacro
-    #   x: 2457.535
-    #   y: 759.745
-    #   orientation: r270
-
-
-# for the por
+    # for the por
     - path: ChipTop/system
       type: obstruction
       obs_types: [power, place, route]
@@ -176,6 +109,11 @@ vlsi.inputs:
       y: 252
       width: 34
       height: 48
+  # custom sdc constraints to set_false_path
+  custom_sdc_constraints: [
+    # "set_false_path -from reset -to system/chipyard_prcictrl_domain/clockDivider/divider_io_resetAsync_stretcher/resetout/reg_0_reg/CK"
+    "set_false_path -from reset"
+  ]
 
 design.def.hv_routing_meta: prependlocal
 design.def.hv_routing: ofo-hv-routing.def
