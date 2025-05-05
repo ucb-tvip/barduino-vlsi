@@ -76,7 +76,7 @@ class BarduinoConfig extends Config(
   new testchipip.soc.WithOffchipBus ++                                                  // attach a offchip bus, since the serial-tl will master some external tilelink memory
   new testchipip.soc.WithNoScratchpads ++                                               // all memory will be across the Serial-TL Interface
   // new freechips.rocketchip.subsystem.WithIncoherentBusTopology ++                       // use incoherent bus topology
-  new freechips.rocketchip.subsystem.WithNBanks(1) ++                                   // remove L2$
+  new freechips.rocketchip.subsystem.WithNBanks(1) ++                                   // 1 bank
   new chipyard.config.WithBroadcastManager++ // Replace L2 with a broadcast hub for coherence
   new freechips.rocketchip.subsystem.WithCoherentBusTopology ++ 
 
