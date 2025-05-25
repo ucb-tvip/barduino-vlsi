@@ -16,7 +16,7 @@ technology.sky130:
   caravel: /home/ff/ee198/ee198-20/sky130_col/caravel/v6.0
 
   lvs_blackbox_srams: true
-  sky130_scl: "/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.0.6/sky130_scl_9T"
+  sky130_scl: "/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.0.6/"
   sky130_cds: "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.6"
   stdcell_library: "sky130_scl"
   #stdcell_library: "sky130_fd_sc_hd"
