@@ -185,6 +185,9 @@ class Sky130EFGPIOV2CellAnalog(cellName: String = consts.defaultGPIOCellName)
   iocell.io.OUT := false.B
   iocell.io.OE_N := true.B
   iocell.io.INP_DIS := true.B
+
+
+  
 }
 
 class Sky130EFGPIOV2CellIO(cellName: String = consts.defaultGPIOCellName, sim: Boolean = false)

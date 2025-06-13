@@ -14,10 +14,25 @@ import testchipip.tsi.{UARTTSIIO}
 import icenet.{NICIOvonly, NICConfig}
 import org.chipsalliance.cde.config.{Parameters}
 import freechips.rocketchip.amba.axi4.{AXI4Bundle, AXI4EdgeParameters}
-import freechips.rocketchip.subsystem.{MemoryPortParams, MasterPortParams, SlavePortParams}
+import freechips.rocketchip.subsystem.{MemoryPortParams, MasterPortParams, SlavePortParams, CBUS}
 import freechips.rocketchip.devices.debug.{ClockedDMIIO}
 import freechips.rocketchip.tilelink.{TLBundle}
 import org.chipsalliance.diplomacy.nodes.{HeterogeneousBag}
+import scumvtuning.{CanHavePeripherySCUMVTuning, SCUMVTuningAnalogIO, SCUMVTuningParams}
+import baseband.{BasebandModemAnalogIO, BasebandModemIntraIO, BasebandModemParams}
+import sifive.blocks.util._
+import sifive.blocks.devices.pwm._
+import sifive.blocks.devices.timer._
+import freechips.rocketchip.prci._
+
+
+import freechips.rocketchip.devices.tilelink._
+import freechips.rocketchip.tilelink._
+import freechips.rocketchip.diplomacy._
+
+
+import freechips.rocketchip.subsystem._
+import freechips.rocketchip.system._
 
 trait Port[T <: Data] {
   val getIO: () => T
@@ -111,3 +126,34 @@ case class TLMemPort       (val getIO: () => HeterogeneousBag[TLBundle])
 
 case class GCDBusyPort     (val getIO: () => Bool)
     extends Port[Bool]
+
+case class SCUMVTuningAnalogPort    (val getIO: () => SCUMVTuningAnalogIO)
+    extends Port[SCUMVTuningAnalogIO]
+
+case class BasebandModemAnalogPort  (val getIO: () => BasebandModemIntraIO)
+    extends Port[BasebandModemIntraIO]
+
+
+case class OffchipSelPort  (val getIO: () => UInt)
+    extends Port[UInt]
+
+
+trait HasAsyncPeripheryTimer { this: BaseSubsystem =>
+  val timer = p(PeripheryTimerKey).map { params =>
+    val cbus = locateTLBusWrapper(CBUS)
+    val timer_domain = cbus.generateSynchronousDomain
+    val timer = timer_domain { LazyModule(new Timer(cbus.beatBytes, params)) }
+    cbus.coupleTo(s"slave_named_timer") {
+    timer.controlXing(NoCrossing) := TLFragmenter(cbus) := _
+    }
+    ibus.fromSync := timer.intXing(NoCrossing)
+    val io = InModuleBody {
+        val timer_clock = IO(Input(Clock())).suggestName("rtc_clock")
+        timer.module.clock := timer_clock
+        timer_clock
+    }
+    io
+    }
+}
+
+

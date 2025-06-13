@@ -89,6 +89,7 @@ class BarduinoConfig extends Config(
   new chipyard.clocking.WithClockGroupsCombinedByName(("uncore", Seq("implicit", "sbus", "mbus", "cbus", "system_bus", "fbus", "pbus"), Nil)) ++
 
   // new chipyard.clocking.WithPureIOClockSky130(freqMHz = 5) ++
+  new baseband.WithBasebandModem() ++
 
   // SETUP RING
   new chipyard.sky130.WithSky130EFIOCells(sim = false) ++

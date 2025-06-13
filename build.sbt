@@ -157,7 +157,7 @@ lazy val chipyard = (project in file("generators/chipyard"))
   .dependsOn(testchipip, rocketchip, boom, rocketchip_blocks, rocketchip_inclusive_cache,
     dsptools, rocket_dsp_utils,
     gemmini, icenet, tracegen, cva6, nvdla, sodor, ibex, fft_generator,
-    constellation, mempress, barf, shuttle, caliptra_aes, rerocc,
+    constellation, mempress, dma, scumvtuning, baseband, barf, shuttle, caliptra_aes, rerocc,
     compressacc, saturn, ara, firrtl2_bridge, vexiiriscv)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(
@@ -182,6 +182,21 @@ lazy val barf = (project in file("generators/bar-fetchers"))
   .dependsOn(rocketchip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
+
+lazy val dma = freshProject("dma", file("generators/dma"))
+  .dependsOn(rocketchip)
+  .settings(libraryDependencies ++= rocketLibDeps.value)
+  .settings(commonSettings)
+
+lazy val baseband = freshProject("baseband", file("generators/baseband"))
+  .dependsOn(fixedpoint, dma, testchipip)
+  .settings(commonSettings)
+  .settings(chiselSettings)
+
+lazy val scumvtuning = freshProject("scumvtuning", file("generators/scumvtuning"))
+  .dependsOn(dma, testchipip)
+  .settings(commonSettings)
+  .settings(chiselSettings)
 
 lazy val saturn = (project in file("generators/saturn"))
   .dependsOn(rocketchip, shuttle)
@@ -257,6 +272,8 @@ lazy val caliptra_aes = (project in file("generators/caliptra-aes-acc"))
   .dependsOn(rocketchip, rocc_acc_utils, testchipip)
   .settings(libraryDependencies ++= rocketLibDeps.value)
   .settings(commonSettings)
+
+
 
 lazy val rerocc = (project in file("generators/rerocc"))
   .dependsOn(rocketchip, constellation, boom, shuttle)

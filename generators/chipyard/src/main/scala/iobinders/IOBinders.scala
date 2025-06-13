@@ -43,6 +43,8 @@ import chipyard.example.{CanHavePeripheryGCD}
 
 import scala.reflect.{ClassTag}
 
+import chipyard.sky130._
+
 object IOBinderTypes {
   type IOBinderTuple = (Seq[Port[_]], Seq[IOCell])
   type IOBinderFunction = (Boolean, => Any) => ModuleValue[IOBinderTuple]
@@ -564,3 +566,156 @@ class WithGCDBusyPunchthrough extends OverrideIOBinder({
     (Seq(GCDBusyPort(() => io_gcd_busy)), Nil)
   }.getOrElse((Nil, Nil))
 })
+
+
+ //import baseband.{CanHavePeripheryBasebandModem, BasebandModemAnalogIO, BasebandModemIntraIO, BasebandModemParams}
+// class WithBasebandModemPunchthrough(params: BasebandModemParams = BasebandModemParams()) extends OverrideIOBinder
+// with HasChipyardPorts
+//  with chipyard.sky130.HasSky130EFCaravelPOR
+//   with chipyard.sky130.HasSky130EFIOCells
+// with chipyard.sky130.HasSky130EFIONoConnCells
+// {
+//   (system: CanHavePeripheryBasebandModem) => {
+//       // Create a *new* top-level IO specifically for the ChipTop connection
+//     val chiptop_clock_port = IO(Input(Clock())).suggestName("bm_clock_in")
+
+//     val clockPort = if (system.analog_bm_clock_pin != null) {
+//        system.analog_bm_clock_pin := chiptop_clock_port // Drive internal pin from ChipTop port
+//        // Return a ClockPort referencing the NEW ChipTop-visible port
+//        Seq(ClockPort(() => chiptop_clock_port, freqMHz = 32.0)) // Set your desired frequency
+//     } else {
+//        chiptop_clock_port := false.B.asClock // Tie off if not used
+//        Nil
+//     }
+
+//     val (bmPorts, cells) = system.bm_ios.map { a =>
+//       // Create the IO bundle that this Port will return
+//       val io = IO(new BasebandModemIntraIO(params)).suggestName("bm_block")
+
+//       val (_, bbRxIO) = IOCell.generateIOFromSignal(a.bump.offChipMode.rx, s"io_baseband_offChipMode_rx", p(IOCellKey))
+//       val (_, bbTxIO) = IOCell.generateIOFromSignal(a.bump.offChipMode.tx, s"io_baseband_offChipMode_tx", p(IOCellKey))
+
+//       // register each signal with caravel -- FIXME: Remove this if not using caravel
+
+//       bbRxIO.foreach { 
+//         case cell: Sky130EFIOCellLike => registerSky130EFIOCell(cell)
+//       }
+      
+//       bbTxIO.foreach { 
+//         case cell: Sky130EFIOCellLike => registerSky130EFIOCell(cell)
+//       }
+      
+//       // Connect the signals from the internal BM IO ('a') to the IO bundle ('io')
+//       // that is being exposed by this binder.
+//       a.intra.lo_div8_clock := io.lo_div8_clock
+//       a.intra.data.rx := io.data.rx
+//       a.intra.data.tx <> io.data.tx
+//       a.intra.data.tuning <> io.data.tuning
+//       a.intra.tuning <> io.tuning 
+
+//       // Return the bmPorts referencing the newly created 'io' bundle
+//       (Seq(BasebandModemAnalogPort(() => io)), bbRxIO ++ bbTxIO)
+//     }.getOrElse((Nil, Nil))
+
+//     // Return both the bmPorts and the ClockPort
+//     (bmPorts ++ clockPort, cells)
+
+//   }
+// }
+
+
+
+
+// import baseband.{CanHavePeripheryBasebandModem, BasebandModemAnalogIO, BasebandModemIntraIO, BasebandModemParams}
+// class WithBasebandModemPunchthrough(params: BasebandModemParams = BasebandModemParams()) extends OverrideIOBinder({
+//   (system: CanHavePeripheryBasebandModem) => {
+//     val chiptop_clock_port = IO(Input(Clock())).suggestName("bm_clock_in")
+
+//     val clockPort = if (system.analog_bm_clock_pin != null) {
+//       system.analog_bm_clock_pin := chiptop_clock_port
+//       Seq(ClockPort(() => chiptop_clock_port, freqMHz = 32.0))
+//     } else {
+//       chiptop_clock_port := false.B.asClock
+//       Nil
+//     }
+
+//     val (bmPorts, cells) = system.bm_ios.map { a =>
+//       val io = IO(new BasebandModemIntraIO(params)).suggestName("bm_block")
+
+//       val (_, bbRxIO) = IOCell.generateIOFromSignal(a.bump.offChipMode.rx, s"io_baseband_offChipMode_rx", Intech22IOCellParams(eastWest=false))
+//       val (_, bbTxIO) = IOCell.generateIOFromSignal(a.bump.offChipMode.tx, s"io_baseband_offChipMode_tx", Intech22IOCellParams(eastWest=false))
+
+
+
+
+
+//       a.intra.lo_div8_clock := io.lo_div8_clock
+//       a.intra.data.rx.i.data := io.data.rx.i.data
+//       a.intra.data.rx.q.data := io.data.rx.q.data
+//       a.intra.data.rx.i.valid := io.data.rx.i.valid
+//       a.intra.data.rx.q.valid := io.data.rx.q.valid
+//       a.intra.data.tx <> io.data.tx
+//       a.intra.data.tuning <> io.data.tuning
+//       a.intra.tuning.trim.g1 := io.tuning.trim.g1
+
+
+//       //intialize wires?
+//             // === TRIM ===
+// //       io.tuning.trim.g0 := a.intra.tuning.trim.g0  // g0 is Output
+// //       a.intra.tuning.trim.g1 := io.tuning.trim.g1  // g1 is Input
+// //       io.tuning.trim.g2 := a.intra.tuning.trim.g2  // g2 is Output
+
+// //       // === TUNING.I ===
+// //       io.tuning.i.vga_gain_ctrl := a.intra.tuning.i.vga_gain_ctrl
+// //       io.tuning.i.bpf.chp_0 := a.intra.tuning.i.bpf.chp_0
+// //       io.tuning.i.bpf.chp_1 := a.intra.tuning.i.bpf.chp_1
+// //       io.tuning.i.bpf.chp_2 := a.intra.tuning.i.bpf.chp_2
+// //       io.tuning.i.bpf.chp_3 := a.intra.tuning.i.bpf.chp_3
+// //       io.tuning.i.bpf.chp_4 := a.intra.tuning.i.bpf.chp_4
+// //       io.tuning.i.bpf.chp_5 := a.intra.tuning.i.bpf.chp_5
+// //       io.tuning.i.bpf.clp_0 := a.intra.tuning.i.bpf.clp_0
+// //       io.tuning.i.bpf.clp_1 := a.intra.tuning.i.bpf.clp_1
+// //       io.tuning.i.bpf.clp_2 := a.intra.tuning.i.bpf.clp_2
+
+// //       // === TUNING.Q ===
+// //       io.tuning.q.vga_gain_ctrl := a.intra.tuning.q.vga_gain_ctrl
+// //       io.tuning.q.bpf.chp_0 := a.intra.tuning.q.bpf.chp_0
+// //       io.tuning.q.bpf.chp_1 := a.intra.tuning.q.bpf.chp_1
+// //       io.tuning.q.bpf.chp_2 := a.intra.tuning.q.bpf.chp_2
+// //       io.tuning.q.bpf.chp_3 := a.intra.tuning.q.bpf.chp_3
+// //       io.tuning.q.bpf.chp_4 := a.intra.tuning.q.bpf.chp_4
+// //       io.tuning.q.bpf.chp_5 := a.intra.tuning.q.bpf.chp_5
+// //       io.tuning.q.bpf.clp_0 := a.intra.tuning.q.bpf.clp_0
+// //       io.tuning.q.bpf.clp_1 := a.intra.tuning.q.bpf.clp_1
+// //       io.tuning.q.bpf.clp_2 := a.intra.tuning.q.bpf.clp_2
+
+// //       // === CURRENT DAC ===
+// //       io.tuning.current_dac.i.vga_s2 := a.intra.tuning.current_dac.i.vga_s2
+// //       io.tuning.current_dac.q.vga_s2 := a.intra.tuning.current_dac.q.vga_s2
+// //       io.tuning.current_dac.vco := a.intra.tuning.current_dac.vco
+
+// // // === ENABLE ===
+// //       io.tuning.enable.i := a.intra.tuning.enable.i
+// //       io.tuning.enable.q := a.intra.tuning.enable.q
+// //       io.tuning.enable.rx1 := a.intra.tuning.enable.rx1
+// //       io.tuning.enable.rx2 := a.intra.tuning.enable.rx2
+// //       io.tuning.enable.vco_lo := a.intra.tuning.enable.vco_lo
+// //       io.tuning.enable.ext_lo := a.intra.tuning.enable.ext_lo
+// //       io.tuning.enable.pa := a.intra.tuning.enable.pa
+
+// // // === MUX DEBUG ===
+// //       io.tuning.mux.dbg.in := a.intra.tuning.mux.dbg.in
+// //       io.tuning.mux.dbg.out := a.intra.tuning.mux.dbg.out
+
+// // // === MISC ===
+// //       io.tuning.adc_clk_tuning := a.intra.tuning.adc_clk_tuning
+// //       io.tuning.pwr_tuning := a.intra.tuning.pwr_tuning
+// //       io.tuning.adc.i.mux_ctrl := a.intra.tuning.adc.i.mux_ctrl
+// //       io.tuning.adc.q.mux_ctrl := a.intra.tuning.adc.q.mux_ctrl
+
+//       (Seq(BasebandModemAnalogPort(() => io)), Nil) // no bump cells
+//     }.getOrElse((Nil, Nil))
+
+//     (bmPorts ++ clockPort, cells)
+//   }
+// })
